@@ -102,7 +102,8 @@ public class CFinderAdapter {
     public void setParams(String[] pmap) {
         params.clear();
         for (int i = 0;i<pmap.length;i+=2) {
-            CommandLineParams p = CommandLineParams.valueOf(pmap[i]);
+
+            CommandLineParams p = CommandLineParams.resolve(pmap[i]);
             if (p == null) {
                 log.warn("Do not recognize " + pmap[i] + "; ignoring");
             } else {

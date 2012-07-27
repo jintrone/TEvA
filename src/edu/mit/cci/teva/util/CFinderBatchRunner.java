@@ -25,11 +25,13 @@ public class CFinderBatchRunner {
     public static String INPUTDIR_PROP = "inputdir";
     public static String EXTENSION_PROP = "extension";
     public static String IGNORE_EXISTING_PROP = "ignoreexisting";
+    public static String CFINDER_APP_PROP = "cfinderapplication";
+    public static String CFINDER_LICENSE_PROP = "cfinderlicense";
 
     public static Logger log = Logger.getLogger(CFinderBatchRunner.class);
 
     Properties props;
-    File inputdir;
+
 
     public CFinderBatchRunner() throws IOException {
       this(DEFAULT_PROPS);
@@ -47,7 +49,7 @@ public class CFinderBatchRunner {
     }
 
     public void process() {
-       inputdir = new File(props.getProperty(INPUTDIR_PROP,"."));
+       File inputdir = new File(props.getProperty(INPUTDIR_PROP,"."));
        final String extension = props.getProperty(EXTENSION_PROP,null);
        if (!inputdir.exists() || !inputdir.isDirectory()) {
            throw new RuntimeException("Could not locate input directory: "+inputdir.getAbsolutePath());
@@ -71,6 +73,17 @@ public class CFinderBatchRunner {
         }
 
         CFinderAdapter cfinder = new CFinderAdapter(params.toArray(new String[params.size()]));
+        String license = props.getProperty(CFINDER_LICENSE_PROP,null);
+        String app = props.getProperty(CFINDER_APP_PROP,null);
+
+        if (app!=null) {
+            cfinder.setCfinderExecutablePath(app);
+        }
+
+        if (license!=null) {
+            cfinder.setCfinderLicensePath(license);
+        }
+
 
         for (File f:files) {
             try {
