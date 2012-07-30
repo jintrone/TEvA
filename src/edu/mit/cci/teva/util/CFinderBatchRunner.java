@@ -65,7 +65,7 @@ public class CFinderBatchRunner {
         for (Enumeration e =props.propertyNames();e.hasMoreElements();) {
             String prop = (String)e.nextElement();
 
-            if (CFinderAdapter.CommandLineParams.valueOf(prop)!=null) {
+            if (CFinderAdapter.CommandLineParams.resolve(prop)!=null) {
                 params.add(prop);
                 params.add(props.getProperty(prop));
             }
