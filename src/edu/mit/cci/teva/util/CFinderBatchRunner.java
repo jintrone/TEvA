@@ -4,7 +4,6 @@ import edu.mit.cci.teva.adapters.CFinderAdapter;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -20,7 +19,7 @@ import java.util.Properties;
  */
 public class CFinderBatchRunner {
 
-    public static String DEFAULT_PROPS = "cfinderbatch.properties";
+    public static String DEFAULT_PROPS = "resources/cfinderbatch.properties";
 
     public static String INPUTDIR_PROP = "inputdir";
     public static String EXTENSION_PROP = "extension";

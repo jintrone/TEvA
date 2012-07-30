@@ -1,85 +1,87 @@
-<property name="doc.dir" 						value="${basedir}/javadoc"/>
-	<property name="src.dir" 						value="${basedir}/src"/>
-	<property name="props.dir"						value="${basedir}/resources/properties"/>
-	<property name="build.dir"						value="${basedir}/build"/>
-	<property name="lib.dir" 						value="${basedir}/lib"/>
+<project name="TEvA" default="build-jar" basedir=".">
+
+    <property name="doc.dir" value="${basedir}/javadoc"/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="deploy.dir" value="${basedir}/deploy"/>
+    <property name="resources.dir" value="${basedir}/resources/"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="jar.file" value="${ant.project.name}.jar"/>
 
 
-<path id="build.classpath">
-		<fileset dir="${basedir}/deploy/${ear.file}/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-		<fileset dir="${jboss.configured.lib.path}">
-			<include name="**/*.jar"/>
-		</fileset>
-		<fileset dir="${jboss.clients.path}">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+    </path>
 
 
-<!-- ***************-->
-<!-- * Clean       *-->
-<!-- ***************-->
+    <!-- ***************-->
+    <!-- * Clean       *-->
+    <!-- ***************-->
 
-<target name="clean">
-		<delete dir="${build.dir}" />
-		<delete dir="${build.dir}/jars"/>
-		<delete dir="${build.dir}/openscope"/>
-	</target>
-
-
-<!-- *************** -->  
-<!-- * Preparation * -->  
-<!-- *************** -->  
-  
-<target name="prepare" depends="clean">  
-    <mkdir dir="${build.dir}"/>  
-    <mkdir dir="${build.dir}/jars"/>  
-    <mkdir dir="${build.dir}/openscope"/>  
-</target> 
-
-<!-- *************** -->  
-<!-- * Compilation * -->  
-<!-- *************** -->    
-  
-<target name="compile" depends="prepare">  
-    <javac destdir="${build.dir}/openscope"  
-            debug="on"  
-            deprecation="on"  
-            optimize="off">  
-        <src path="${src.dir}"/>  
-    <classpath refid="build.classpath"/>  
-    </javac>  
-  
-    <copy todir="${build.dir}/openscope">  
-        <fileset dir="${props.dir}">  
-            <include name="*.properties"/>  
-        </fileset>  
-    </copy>  
-</target> 
-
-<target name="doc-prepare">
-		<mkdir dir="${build.dir}"/>
-		<mkdir dir="${doc.dir}"/>
-	</target>
-		
-	<target name="javadoc" depends="doc-prepare">
-		<javadoc packagenames="com.openscope.groupware.*"
-				 classpathref="build.classpath"
-	             sourcepath="${src.dir}"
-	             destdir="${doc.dir}"
-	             author="true"
-	             version="true"
-	             windowtitle="Openscope API"
-	             doctitle="Openscope Reminders"
-	             bottom="Copyright © 2010 Openscope, Inc. All Rights Reserved."
-		/>
-	</target>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="$deploy.dir}"/>
+    </target>
 
 
-<target name="build-war" depends="package-logic">
+    <!-- *************** -->
+    <!-- * Preparation * -->
+    <!-- *************** -->
 
-		<jar jarfile="${build.dir}/jars/${war.file}" basedir="${basedir}/deploy/${ear.file}/${war.file}"/>
+    <target name="prepare" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${deploy.dir}"/>
+    </target>
 
-	</target>
+    <!-- *************** -->
+    <!-- * Compilation * -->
+    <!-- *************** -->
+
+    <target name="compile" depends="prepare">
+        <javac destdir="${build.dir}"
+               debug="on"
+               deprecation="on"
+               optimize="off">
+            <src path="${src.dir}"/>
+            <classpath refid="build.classpath"/>
+        </javac>
+
+        <copy todir="${build.dir}">
+            <fileset dir="${resources.dir}">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="doc-prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${doc.dir}"/>
+    </target>
+
+    <target name="javadoc" depends="doc-prepare">
+        <javadoc packagenames="edu.mit.cci.*"
+                 classpathref="build.classpath"
+                 sourcepath="${src.dir}"
+                 destdir="${doc.dir}"
+                 author="true"
+                 version="true"
+                 windowtitle="TEvA API"
+                 doctitle="TEvA"
+                 bottom="Copyright © 2010 Josh Introne, Inc. All Rights Reserved."
+                />
+    </target>
+
+
+    <target name="build-jar" depends="compile">
+
+        <jar destfile="${deploy.dir}/${jar.file}">
+            <fileset dir="${build.dir}"/>
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+        </jar>
+
+    </target>
+
+</project>
