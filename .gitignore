@@ -7,3 +7,8 @@
 
 #IDEA files#
 *.iml
+
+#build & deploy dir#
+build
+deploy
+lib
