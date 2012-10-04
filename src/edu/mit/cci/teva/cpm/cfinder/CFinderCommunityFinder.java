@@ -38,8 +38,8 @@ public class CFinderCommunityFinder implements CommunityFinder {
         this.overwriteAnalysis = overwriteAnalysis;
         this.outputdir = outputdir;
         cFinderRunner = new CFinderRunner(params.getCFinderExecutable(), params.getCFinderLicensePath());
-        cFinderRunner.setParam(CFinderRunner.CommandLineParams.CLIQUE_SIZE, "" + params.getFixedCliqueSize(4));
-        cFinderRunner.setParam(CFinderRunner.CommandLineParams.MIN_WEIGHT, "" + params.getMinimumLinkWeight(.5f));
+        cFinderRunner.setParam(CFinderRunner.CommandLineParams.CLIQUE_SIZE, "" + params.getFixedCliqueSize());
+        cFinderRunner.setParam(CFinderRunner.CommandLineParams.MIN_WEIGHT, "" + params.getMinimumLinkWeight());
     }
 
 

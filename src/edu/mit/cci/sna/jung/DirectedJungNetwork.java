@@ -33,4 +33,20 @@ public class DirectedJungNetwork extends DirectedSparseMultigraph<Node,Edge> imp
     public boolean isDirected() {
         return true;
     }
+
+        public void remove(Edge e) {
+       this.removeEdge(e);
+    }
+
+    public void remove(Node n) {
+       this.removeVertex(n);
+    }
+
+    public void add(Node n) {
+        this.addVertex(n);
+    }
+
+    public void add(Edge e) {
+        this.addEdge(e,e.getEndpoints()[0],e.getEndpoints()[1]);
+    }
 }

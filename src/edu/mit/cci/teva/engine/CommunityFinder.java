@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface CommunityFinder {
 
-    List<CommunityFrame> findCommunities(File currentGraph, int cliqueSizeAtWindow, int window) throws IOException, InterruptedException, CommunityFinderException;
-    List<CommunityFrame> findCommunities(Network currentGraph, int cliqueSizeAtWindow, int window, String id) throws IOException, InterruptedException, CommunityFinderException;
+    List<CommunityFrame> findCommunities(File currentGraph, int cliqueSizeAtWindow, int window) throws CommunityFinderException;
+    List<CommunityFrame> findCommunities(Network currentGraph, int cliqueSizeAtWindow, int window, String id) throws CommunityFinderException;
 }

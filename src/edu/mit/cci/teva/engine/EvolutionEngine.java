@@ -90,7 +90,7 @@ public class EvolutionEngine {
 
     private boolean step(int i, Network lastGraph, Network currentGraph) throws CommunityFinderException {
 
-        List<CommunityFrame> to = finder.findCommunities(currentGraph, getCliqueSizeAtWindow(i), i);
+        List<CommunityFrame> to = finder.findCommunities(currentGraph, getCliqueSizeAtWindow(i), i,params.getFilenameIdentifier());
         if (to == null) return false;
 
         if (lastGraph == null) {

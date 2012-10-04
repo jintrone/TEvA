@@ -10,4 +10,23 @@ import edu.mit.cci.sna.Network;
 public interface ScoringMethod {
 
     public float score(Network one, Network two);
+
+
+    public enum Method implements ScoringMethod {
+        SIMILARITY() {
+            public float score(Network one, Network two) {
+                return 0f;
+            }
+
+        },
+
+        COVERAGE() {
+            public float score(Network one, Network two) {
+                return 0f;
+            }
+        }
+
+
+    }
+
 }

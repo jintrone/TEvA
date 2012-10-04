@@ -71,17 +71,10 @@ public class CFinderBatchRunner {
             }
         }
 
-        CFinderRunner cfinder = new CFinderRunner(params.toArray(new String[params.size()]));
         String license = props.getProperty(CFINDER_LICENSE_PROP,null);
-        String app = props.getProperty(CFINDER_APP_PROP,null);
+                String app = props.getProperty(CFINDER_APP_PROP,null);
 
-        if (app!=null) {
-            cfinder.setCfinderExecutablePath(app);
-        }
-
-        if (license!=null) {
-            cfinder.setCfinderLicensePath(license);
-        }
+        CFinderRunner cfinder = new CFinderRunner(app,license,params.toArray(new String[params.size()]));
 
 
         for (File f:files) {
