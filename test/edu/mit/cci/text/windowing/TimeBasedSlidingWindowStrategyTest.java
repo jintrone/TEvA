@@ -3,11 +3,14 @@ package edu.mit.cci.text.windowing;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.log4j.Logger;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -18,6 +21,8 @@ import java.util.List;
  * @since <pre>09/25/2012</pre>
  */
 public class TimeBasedSlidingWindowStrategyTest extends TestCase {
+    private static Logger log = Logger.getLogger(TimeBasedSlidingWindowStrategy.class );
+
     public TimeBasedSlidingWindowStrategyTest(String name) {
         super(name);
     }
@@ -28,6 +33,37 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
 
     public void tearDown() throws Exception {
         super.tearDown();
+    }
+
+    public void testWindowsOnEdge() throws Exception {
+        Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
+        Date end = new GregorianCalendar(2000,1,1,9,3).getTime();
+        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,60*1000,60*1000);
+        assertEquals("Incorrect number of windows", 4, ts.getNumberWindows());
+
+    }
+
+
+    public void testWindows1() throws Exception {
+        Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
+        Date end = new GregorianCalendar(2000,1,1,9,3).getTime();
+
+        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,2*60*1000,60*1000);
+        assertEquals("Incorrect number of windows", 3, ts.getNumberWindows());
+
+
+    }
+
+    public void testWindows() throws Exception {
+        Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
+        Date end = new GregorianCalendar(2000,1,1,9,4).getTime();
+
+        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,2*60*1000,60*1000);
+        assertEquals("Incorrect number of windows", 4, ts.getNumberWindows());
+
+
+
+
     }
 
     /**
@@ -52,26 +88,29 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
         List<Windowable> w = MockWindowable.getWindows(dates);
         TimeBasedSlidingWindowStrategy<Windowable> strat = new TimeBasedSlidingWindowStrategy<Windowable>(dates[0],dates[dates.length-1],30*60*1000,9*60*1000);
         int[][] expect = new int[][] {
-                {0}, //12:00 - 12:09
-                {0,1}, //12:00 - 12:18
-                {0,1},  //12:00 - 12:27
-                {1,2}, //12:06 - 12:36
-                {2,3}, //12:15 - 12:45
-                {2,3}, //12:24 - 12:54
-                {3}, //12:33 - 1:03
-                {}, //12:42 - 1:12
-                {}, //12:51 - 1:21
-                {},//1:00 - 1:30
-                {},//1:09 - 1:39
-                {},//1:18 - 1:48
-                {4},//1:27 - 1:57
-                {4},//1:36 - 2:06
-                {4},// 1:47 - 2:17
-                {},// 1:56 - 2:26
-                {5},// 2:05 - 2:35
+                {0,1}, //12:00 - 12:30
+                {1,2}, //12:09 - 12:39
+                {2,3},  //12:18 - 12:48
+                {2,3}, //12:27 - 12:57
+                {3}, //12:36 - 1:06
+                {}, //12:45 - 1:15
+                {}, //12:54 - 13:24
+                {}, //13:03 - 13:33
+                {}, //13:12 - 13:42
+                {4},//13:21 - 13:51
+                {4},//13:30 - 14:00
+                {4},//13:39 - 14:09
+                {4},//13:48 - 14:18
+                {},//13:57 - 14:27
+                {5} // 14:06 - 14:36
+
 
 
         };
+
+        for (int i =0;i<strat.getNumberWindows();i++) {
+            log.debug("Windows: "+strat.getWindowBounds(i)[0]+strat.getWindowBounds(i)[1]);
+        }
 
         strat.setData(w);
 

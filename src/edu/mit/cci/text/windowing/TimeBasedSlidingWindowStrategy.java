@@ -8,17 +8,18 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Slides a window of some width at a given delta across a sample.  Slides the leading edge from
- * the start of the sample, updates the trailing edge.  Thus, the sliding window "fades into" the sample.
+ * Slides a window of some width at a given delta across a sample. Guarantees that data at
+ * the max time will be included in a window.  Windows are inclusive of the start,
+ * exclusive of their end
  *
  * User: jintrone
  * Date: 5/23/11
  * Time: 6:18 PM
  */
-public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements WindowStrategy {
+public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements WindowStrategy<Windowable> {
 
-    int numWindows = 0;
-    List<T> current;
+    int numWindows = 1;
+    List<Windowable> current;
     Date min, max;
     long size;
     long delta;
@@ -27,7 +28,12 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
 
 
     public TimeBasedSlidingWindowStrategy(Date min, Date max, long size, long delta) {
-        numWindows = (int) Math.ceil((max.getTime()  - min.getTime()) / (float)delta);
+        //this is so embarrassing
+        long x = min.getTime();
+        while (x+size <= max.getTime()) {
+            numWindows++;
+            x+=delta;
+        }
         this.min = min;
         this.max = max;
         this.size = size;
@@ -39,27 +45,19 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         return numWindows;
     }
 
-    public void setData(List args) {
+    public void setData(List<Windowable> args) {
         this.current = args;
     }
 
     public Date[] getWindowBounds(int idx) {
-       Date end = new Date(min.getTime() + ((idx + 1) * delta));
-       return new Date[] {new Date(Math.max(min.getTime(), end.getTime() - size)),end};
+       Date start = new Date(min.getTime() + (idx * delta));
+       return new Date[] {start,new Date(start.getTime()+size)};
 
     }
 
-    public boolean overlaps(int myindx, TimeBasedSlidingWindowStrategy strategy, int otheridx) {
-      Date[] other = strategy.getWindowBounds(otheridx);
-      Date[] mine = this.getWindowBounds(myindx);
-      return mine[0].compareTo(other[1]) < 1 && mine[1].compareTo(other[0]) > -1;
-
-    }
-
-    public List<T> getWindow(int idx) {
+    public List<Windowable> getWindow(int idx) {
         Date beginning = getWindowBounds(idx)[0];
         Date end = getWindowBounds(idx)[1];
-        log.debug("Window " + idx + " from " + beginning + " to " + end);
 
 
         int first = -1;
@@ -71,7 +69,7 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
             else if (first < 0) {
                 first = i;
             }
-            if (current.get(i).getStart().after(end)) {
+            if (current.get(i).getStart().equals(end) || current.get(i).getStart().after(end)) {
                 last = i;
                 break;
             }
@@ -84,16 +82,10 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         }
 
 
-        List<T> result = current.subList(first, last);
-        if (log.getEffectiveLevel().equals(Level.DEBUG)) {
+        List<Windowable> result = current.subList(first, last);
 
-            StringBuilder builder = new StringBuilder();
-            for (T p : result) {
-
-                builder.append(p.getStart()).append(";");
-            }
-            log.debug("Process posts " + builder.toString());
-        }
         return result;
     }
+
+
 }

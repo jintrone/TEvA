@@ -11,7 +11,7 @@ import java.util.List;
 
 
 /**
- * A "bin" is just a bin of objects in a temporal data stream.  Multiple bins may have at each window.
+ * A "bin" is just a bin of objects in a temporal data stream.  Multiple bins may exist at each window.
  *
  * Consider a matrix of data, where column index reflects temporal index, and rows represent parallel temporal processes.
  * Then, windows indicate columns, and bins indicate rows.
@@ -19,16 +19,8 @@ import java.util.List;
  */
 public interface BinningStrategy<T> {
 
-    public Date[] getBinBoundaries(int i);
-    public int findBin(Date d);
-    public List<T> getBinContents(int i);
-    public int getNumBins(int i);
-    public boolean binContains(int idx, Date date);
-    public boolean beforeBin(Date date, int idx);
-    public boolean afterBin(Date date, int idx);
+    public List<List<T>> getDataAtWindow(int window);
+    public int getNumBins();
+    public int getNumWindows();
 
-    public static interface DateInspector<T> {
-        public Date getDate(T obj);
-
-    }
 }

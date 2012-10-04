@@ -16,8 +16,6 @@ public class EdgeImpl implements Edge {
 
     private static int idgen = 0;
 
-    private final int id;
-
     private float weight = 0;
 
     private Map<String,Object> attributes = new HashMap<String,Object>();
@@ -27,13 +25,16 @@ public class EdgeImpl implements Edge {
     private Node[] endpoints;
 
 
+    private EdgeImpl() {
+        throw new RuntimeException("Fix any clases that depend upon the no-arg constructor in EdgeImpl");
+    }
 
-    public EdgeImpl() {
-        this.id = idgen++;
+    public EdgeImpl(Node from, Node to) {
+        this(from,to,1.0f,false);
     }
 
     public EdgeImpl(Node from, Node to, float weight, boolean directed) {
-        this.id = idgen++;
+
         this.directed = directed;
         this.setWeight(weight);
         this.endpoints = new Node[] {from,to};
@@ -92,6 +93,8 @@ public class EdgeImpl implements Edge {
             }
         };
     }
+
+
 
    public String toString() {
             return getEndpoints()[0]+"->"+getEndpoints()[1]+"("+getWeight()+")";

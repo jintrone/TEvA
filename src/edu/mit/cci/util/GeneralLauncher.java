@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Command line utility to launch a class by calling it's constructor with a properties file
+ *
  * User: jintrone
  * Date: 7/27/12
  * Time: 12:10 PM

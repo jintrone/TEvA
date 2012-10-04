@@ -1,6 +1,6 @@
 package edu.mit.cci.teva.util;
 
-import edu.mit.cci.teva.adapters.CFinderAdapter;
+import edu.mit.cci.teva.cpm.cfinder.CFinderRunner;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -65,13 +65,13 @@ public class CFinderBatchRunner {
         for (Enumeration e =props.propertyNames();e.hasMoreElements();) {
             String prop = (String)e.nextElement();
 
-            if (CFinderAdapter.CommandLineParams.resolve(prop)!=null) {
+            if (CFinderRunner.CommandLineParams.resolve(prop)!=null) {
                 params.add(prop);
                 params.add(props.getProperty(prop));
             }
         }
 
-        CFinderAdapter cfinder = new CFinderAdapter(params.toArray(new String[params.size()]));
+        CFinderRunner cfinder = new CFinderRunner(params.toArray(new String[params.size()]));
         String license = props.getProperty(CFINDER_LICENSE_PROP,null);
         String app = props.getProperty(CFINDER_APP_PROP,null);
 

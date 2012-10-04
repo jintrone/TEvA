@@ -1,6 +1,7 @@
 package edu.mit.cci.text.windowing;
 
 import java.util.Date;
+import java.util.List;
 
 /**
 * User: jintrone
@@ -9,6 +10,5 @@ import java.util.Date;
 */
 public interface Windowable {
     public Date getStart();
-    public Date getEnd();
-    public int getSize();
+    public List<String> getTokens();
 }

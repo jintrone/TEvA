@@ -35,6 +35,13 @@ public class JungUtils {
 
             }
         },
+
+        ADD_MAX_1 {
+            public float merge(Edge one, Edge two) {
+                return Math.min(1.0f,one.getWeight()+two.getWeight());
+
+            }
+        },
         MAX {
 
             public float merge(Edge one, Edge two) {
@@ -83,7 +90,7 @@ public class JungUtils {
             if (e != null) {
                 e.setWeight(policy.merge(e,edge));
             } else {
-                EdgeImpl nedge = new EdgeImpl();
+                EdgeImpl nedge = new EdgeImpl(src,dest);
                 nedge.setWeight(edge.getWeight());
                 to.addEdge(nedge, src, dest);
             }

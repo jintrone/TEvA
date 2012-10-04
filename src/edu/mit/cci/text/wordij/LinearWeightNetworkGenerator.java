@@ -113,11 +113,7 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
 
     }
 
-    public static void main(String[] args) {
-        String[] corpus = new String[]{"0", "1", "2", "3", "4"};
-        //DefaultJungGraph graph = new LinearWeightCalculator(2, 3).calculateWeights(Arrays.asList(corpus));
-       // System.err.println(graph);
-    }
+
 
 
 }

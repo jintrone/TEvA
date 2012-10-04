@@ -70,7 +70,7 @@ public class NodeImpl implements Node {
     }
 
     public boolean equals(Object o) {
-        return o instanceof NodeImpl && ((NodeImpl)o).getId() == getId();
+        return o instanceof Node && ((Node)o).getId().equals(getId());
     }
 
 

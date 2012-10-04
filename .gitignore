@@ -6,7 +6,10 @@
 
 #IDEA files#
 *.iml
+.idea
 
 #build & deploy dir#
 build
 deploy
+out
+sample

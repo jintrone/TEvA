@@ -30,7 +30,32 @@ public class UndirectedJungNetwork extends UndirectedSparseMultigraph<Node,Edge>
         return getVertices();
     }
 
+
     public boolean isDirected() {
         return false;
     }
+
+    public void remove(Edge e) {
+       this.removeEdge(e);
+    }
+
+    public void remove(Node n) {
+       this.removeVertex(n);
+    }
+
+    public void add(Node n) {
+        this.addVertex(n);
+    }
+
+    public void add(Edge e) {
+        this.addEdge(e,e.getEndpoints()[0],e.getEndpoints()[1]);
+    }
+
+    public Edge addEdge(Node node1, Node node2, float weight) {
+        Edge e = new EdgeImpl(node1,node2,weight,false);
+        this.addEdge(e,node1,node2);
+        return e;
+    }
+
+
 }

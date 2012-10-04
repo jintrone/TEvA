@@ -1,8 +1,14 @@
 package edu.mit.cci.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 /**
@@ -75,7 +81,74 @@ public class U {
         return obj;
     }
 
-      public static interface Adapter<T, V> {
+    public static void delete(File f) throws IOException {
+        if (f.isDirectory()) {
+            for (File c : f.listFiles())
+                delete(c);
+        }
+//        if (!f.delete())
+//            throw new FileNotFoundException("Failed to delete file: " + f);
+    }
+
+    public static interface Adapter<T, V> {
         public V adapt(T obj);
+    }
+
+    public static <T> Iterable<T> multiIterator(final Iterable<T>... cs) {
+        return new Iterable<T>() {
+
+
+            public Iterator<T> iterator() {
+                return new Iterator<T>() {
+
+                    List<Iterator<T>> its = new ArrayList<Iterator<T>>();
+
+                    {
+                        for (Iterable<T> i : cs) {
+                            its.add(i.iterator());
+                        }
+                    }
+
+                    public boolean hasNext() {
+                        while (its.size() > 0 && !its.get(0).hasNext()) {
+                            its.remove(0);
+
+                        }
+                        return its.size() > 0 && its.get(0).hasNext();
+                    }
+
+                    public T next() {
+                        while (its.size() > 0 && !its.get(0).hasNext()) {
+                                its.remove(0);
+
+                        }
+                        if (its.size() > 0) return its.get(0).next();
+                        else throw new NoSuchElementException();
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException("Remove is not supported");
+                    }
+                };
+            }
+        };
+    }
+
+    /**
+     * Splits, just like the underlying String.split, but skips any empty tokens in the result
+     *
+     * @param str
+     * @param regx
+     * @return
+     */
+    public static String[] mysplit(String str, String regx) {
+        String[] tmp = str.split(regx);
+        List<String> result = new ArrayList<String>();
+        for (String s:tmp) {
+            if (!s.isEmpty()) {
+                result.add(s);
+            }
+        }
+        return result.toArray(new String[result.size()]);
     }
 }

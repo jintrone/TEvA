@@ -21,4 +21,10 @@ public interface WindowStrategy<T> {
      */
     public void setData(List<T> data);
 
+    public static interface Factory<T> {
+
+        public WindowStrategy<T> getStrategy();
+
+    }
+
 }
