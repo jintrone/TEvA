@@ -1,5 +1,10 @@
 package edu.mit.cci.sna;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,6 +16,8 @@ import java.util.Set;
  * Date: 6/19/12
  * Time: 6:54 AM
  */
+@XmlRootElement(name="Clique")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Clique {
 
     private static int MAX_ID = -1;
@@ -37,6 +44,7 @@ public class Clique {
         setId(localId);
     }
 
+    @XmlAttribute(name = "id")
     public int getId() {
         return id;
     }
@@ -45,6 +53,7 @@ public class Clique {
         this.nodes.addAll(nodes);
     }
 
+    @XmlElement(name = "node")
     public Set<String> getNodes() {
         return nodes;
     }

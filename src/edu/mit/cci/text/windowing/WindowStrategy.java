@@ -1,5 +1,6 @@
 package edu.mit.cci.text.windowing;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public interface WindowStrategy<T> {
 
     public int getNumberWindows();
     public List<T> getWindow(int i);
+    public Date[][] getWindowBoundaries();
 
     /**
      * Sets the underlying data stream to be indexed.  Expects data to be sorted.

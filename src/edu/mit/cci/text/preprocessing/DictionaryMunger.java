@@ -2,6 +2,11 @@ package edu.mit.cci.text.preprocessing;
 
 import org.apache.log4j.Logger;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +41,10 @@ public class DictionaryMunger implements Munger {
     protected SimpleMatrix<Path> matrix;
 
 
+
+
+
+
     public DictionaryMunger(String[][] replacements) {
 
         for (String[] r : replacements) {
@@ -43,6 +52,16 @@ public class DictionaryMunger implements Munger {
         }
 
         matrix = new SimpleMatrix<Path>(count(top, 0), 0);
+    }
+
+    public static DictionaryMunger read(InputStream i) throws IOException {
+        List<String[]> dictionary = new ArrayList<String[]>();
+        BufferedReader stream = new BufferedReader(new InputStreamReader(i));
+        String line = null;
+        while ((line= stream.readLine())!=null) {
+            dictionary.add(line.trim().split("\\s+"));
+        }
+        return new DictionaryMunger(dictionary.toArray(new String[dictionary.size()][]));
     }
 
 

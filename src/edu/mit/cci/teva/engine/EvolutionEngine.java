@@ -34,16 +34,24 @@ public class EvolutionEngine {
     private NetworkProvider provider;
     private CommunityFinder finder;
 
+
+
     private CommunityModel model;
     private TevaParameters params;
 
 
-    public EvolutionEngine(TevaParameters params, NetworkProvider provider, CommunityFinder finder, EvolutionStepStrategy stepper, MergeStrategy merger) {
+    public EvolutionEngine(CommunityModel model, TevaParameters params, NetworkProvider provider, CommunityFinder finder, EvolutionStepStrategy stepper, MergeStrategy merger) {
+        this.model = model;
         this.provider = provider;
         this.stepStrategy = stepper;
         this.mergeStrategy = merger;
         this.finder = finder;
         this.params = params;
+    }
+
+
+     public CommunityModel getCommunityModel() {
+        return model;
     }
 
 
@@ -60,7 +68,6 @@ public class EvolutionEngine {
 
 
         Network lastGraph = null;
-        model = new CommunityModel();
         for (int i = 0; i < provider.getNumberWindows(); i++) {
 
             Network currentGraph = provider.getNetworkAt(i);
@@ -97,7 +104,7 @@ public class EvolutionEngine {
 
 
             for (CommunityFrame a : to) {
-                Community c = new Community();
+                Community c = Community.create();
                 c.addFrame(a);
                 model.addCommunity(c);
                 logProcess.info("CREATE INIT COMMUNITY " + c + " -> " + a.getNodes());

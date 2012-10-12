@@ -32,17 +32,13 @@ public class CFinderReader {
     private static Logger log = Logger.getLogger(CFinderReader.class);
 
 
-
-
-
-
     public static List<CliqueDecoratedNetwork> readCommunities(int cliquesize, File basedir) throws IOException, CommunityFinderException {
         File target = new File(basedir, "k=" + cliquesize);
         Map<Integer, Clique> cliques = processGlobalCliques(basedir);
         File communitiesFile = new File(target, "communities_links");
         boolean intensity = false;
         if (!communitiesFile.exists()) {
-            communitiesFile = new File(target,"intensity_communities_links");
+            communitiesFile = new File(target, "intensity_communities_links");
             if (!communitiesFile.exists()) {
                 throw new CommunityFinderException("Could not identify communities file");
 
@@ -54,7 +50,7 @@ public class CFinderReader {
         List<CliqueDecoratedNetwork> infos = new ArrayList<CliqueDecoratedNetwork>();
 
         BufferedReader communityReader = new BufferedReader(new FileReader(communitiesFile));
-        BufferedReader cliqueReader = new BufferedReader(new FileReader(new File(target,intensity?"intensity_communities_links":"communities_links")));
+        BufferedReader cliqueReader = new BufferedReader(new FileReader(new File(target, intensity ? "intensity_communities_cliques" : "communities_cliques")));
 
         String line;
         List<String> links = new ArrayList<String>();
@@ -66,19 +62,20 @@ public class CFinderReader {
             if (line.startsWith("#") || line.isEmpty()) continue;
             Matcher m = commPattern.matcher(line);
             if (m.matches()) {
-                if (cinfo!=null) {
-                    cinfo.addCliques(readCliques(communityId,cliqueReader,cliques));
+                log.debug("Match line: "+line);
+                if (cinfo != null) {
+                    cinfo.addCliques(readCliques(communityId, cliqueReader, cliques));
+                    log.debug("Adding info for community: "+communityId);
                     infos.add(cinfo);
-
-                } else {
-                    cinfo = new CliqueDecorater(new UndirectedJungNetwork());
-                    communityId = m.group(1);
-
                 }
+                cinfo = new CliqueDecorater(new UndirectedJungNetwork());
+                communityId = m.group(1);
+
+
             } else {
                 String[] n = line.trim().split(" ");
                 if (cinfo == null) {
-                    throw new CommunityFinderException("Error processing community file:"+communitiesFile.getAbsolutePath());
+                    throw new CommunityFinderException("Error processing community file:" + communitiesFile.getAbsolutePath());
                 }
                 cinfo.add(new EdgeImpl(new NodeImpl(n[0]), new NodeImpl(n[1]), 1.0f, false));
             }
@@ -86,8 +83,9 @@ public class CFinderReader {
 
 
         if (cinfo != null) {
+            log.debug("Adding info for community: "+communityId);
             infos.add(cinfo);
-             cinfo.addCliques(readCliques(communityId,cliqueReader,cliques));
+            cinfo.addCliques(readCliques(communityId, cliqueReader, cliques));
         }
         communityReader.close();
         cliqueReader.close();
@@ -136,7 +134,7 @@ public class CFinderReader {
                         if (cid.trim().isEmpty()) continue;
                         result.add(gcliques.get(Integer.parseInt(cid)));
                     }
-                   break;
+                    break;
                 }
 
 
@@ -147,9 +145,9 @@ public class CFinderReader {
     }
 
 
-
-
-
+    public static void main(String[] args) throws IOException, CommunityFinderException {
+        readCommunities(4, new File("/Users/jintrone/Documents/DEV/REASONTEVA/work/CFinderNetwork.TEvA.0.net_files"));
+    }
 
 
 }

@@ -22,6 +22,16 @@ public class TevaParameters extends Properties {
     public static String CFINDER_EXECUTABLE_PATH = "cfinder_executable_path";
     public static String CFINDER_LICENSE_PATH="cfinder_license_path";
     public static String FILENAME_IDENITIFIER = "filename_identifier";
+    public static final String WORD_REPLACEMENT_DICTIONARY = "word_replacement_dictionary";
+    public static final String STOPWORD_LIST = "stopword_list";
+    public static final String SLIDING_WINDOW_DELTA = "sliding_window_delta";
+    public static final String SLIDING_WINDOW_SIZE = "sliding_window_size";
+    public static final String WORDIJ_INDIRECTION_SIZE = "wordij_indirection_size";
+    public static final String WORDIJ_TUPLE_SIZE = "wordij_tuple_size";
+    public static final String WORKING_DIRECTORY = "working_directory";
+    private static final String OVERWRITE_NETWORKS = "overwrite_networks";
+    private static final String OVERWRITE_ANALYSES  = "overwrite_analyses";
+    private static final String SKIP_NETWORK_GENERATION = "skip_network_generation";
 
 
     public TevaParameters(InputStream input) throws IOException {
@@ -29,8 +39,9 @@ public class TevaParameters extends Properties {
         this.load(input);
     }
 
-    public TevaParameters() {
+    public TevaParameters() throws IOException {
         super();
+        this.load(getClass().getResourceAsStream("/teva.properties"));
 
     }
 
@@ -125,5 +136,46 @@ public class TevaParameters extends Properties {
         params.store(new FileWriter("resources/teva.properties"), "resources/teva.properties");
 
 
+    }
+
+    public String getReplacementDictionary() {
+        return getProperty(WORD_REPLACEMENT_DICTIONARY,null);
+    }
+
+    public String getStopwordList() {
+        return getProperty(STOPWORD_LIST,null);
+    }
+
+    public long getWindowSize() {
+        return Long.parseLong(getProperty(SLIDING_WINDOW_SIZE, "-1"));
+    }
+
+    public long getWindowDelta() {
+        return Long.parseLong(getProperty(SLIDING_WINDOW_DELTA,"-1"));
+    }
+
+    public int getWordijIndirection() {
+        return Integer.parseInt(getProperty(WORDIJ_INDIRECTION_SIZE,3+""));
+    }
+
+    public int getWordijTupleSize() {
+
+        return Integer.parseInt(getProperty(WORDIJ_TUPLE_SIZE,2+""));
+    }
+
+    public String getWorkingDirectory() {
+        return getProperty(WORKING_DIRECTORY,"/temp");
+    }
+
+    public boolean getOverwriteNetworks() {
+        return Boolean.parseBoolean(getProperty(OVERWRITE_NETWORKS, false + ""));
+    }
+
+    public boolean getOverwriteAnalyses() {
+        return Boolean.parseBoolean(getProperty(OVERWRITE_ANALYSES, true + ""));
+    }
+
+    public boolean getSkipNetworkGeneration() {
+        return Boolean.parseBoolean(getProperty(SKIP_NETWORK_GENERATION,false+""));
     }
 }

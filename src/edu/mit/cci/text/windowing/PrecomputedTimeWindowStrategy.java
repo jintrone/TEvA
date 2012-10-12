@@ -56,6 +56,10 @@ public class PrecomputedTimeWindowStrategy<T extends Windowable> implements Wind
 
     }
 
+    public Date[][] getWindowBoundaries() {
+        return windows;
+    }
+
     public void setData(List<Windowable> data) {
         this.data = data;
     }

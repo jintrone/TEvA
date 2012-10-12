@@ -105,11 +105,14 @@ public class CFinderRunner {
     }
 
     public boolean process(File inputFile, boolean overwrite) throws IOException, InterruptedException {
-        if (getOutputDir(inputFile).exists() && overwrite) {
-            U.delete(getOutputDir(inputFile));
-        } else {
-            log.warn("Output directory exists, skipping community generation");
-            return false;
+        log.debug("Process:" + inputFile + " with params " + params);
+        if (getOutputDir(inputFile).exists()) {
+            if (overwrite) {
+                U.delete(getOutputDir(inputFile));
+            } else {
+                log.warn("Output directory exists, skipping community generation");
+                return false;
+            }
         }
 
         log.info("Generating communities for " + inputFile.getName());
@@ -141,7 +144,6 @@ public class CFinderRunner {
         log.info("Finished in " + (System.currentTimeMillis() - current) / 1000l + " seconds.");
         return true;
     }
-
 
 
     public File getOutputDir(File inputfile) {

@@ -45,7 +45,9 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
 
 
     public Network calculateWeights(List<String> sample) {
+
         if (sample == null || sample.size() == 0) return null;
+        log.info("Calculating network on sample: "+sample.size());
         UndirectedJungNetwork result = new UndirectedJungNetwork();
         Map<String, Node> vertices = new HashMap<String, Node>();
         List<Node> buffer = new ArrayList<Node>();
@@ -68,8 +70,11 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
                     Node from = buffer.get(i);
                     Node to = buffer.get(j);
                     Edge edge = result.findEdge(from, to);
-                    if (edge != null && edge.getWeight() < 1.0f) {
-                        edge.setWeight(1.0f);
+                    if (edge != null) {
+                        //this shouldn't really happen.
+                        if (edge.getWeight() < 1.0f) {
+                            edge.setWeight(1.0f);
+                        }
                     } else {
                         edge = new EdgeImpl(from,to,1.0f,false);
                         result.addEdge(edge, from, to);

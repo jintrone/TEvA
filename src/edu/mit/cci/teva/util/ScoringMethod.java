@@ -1,6 +1,7 @@
 package edu.mit.cci.teva.util;
 
 import edu.mit.cci.sna.Network;
+import edu.mit.cci.sna.NetworkUtils;
 
 /**
  * User: jintrone
@@ -15,14 +16,14 @@ public interface ScoringMethod {
     public enum Method implements ScoringMethod {
         SIMILARITY() {
             public float score(Network one, Network two) {
-                return 0f;
+                return NetworkUtils.similarity(one,two);
             }
 
         },
 
         COVERAGE() {
             public float score(Network one, Network two) {
-                return 0f;
+                return NetworkUtils.coverage(one,two);
             }
         }
 

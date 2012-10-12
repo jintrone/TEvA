@@ -38,6 +38,7 @@ public class CompositeMunger implements Munger {
         while (!words.isEmpty()) {
             String next = words.remove(0);
             if (current.read(next)) {
+                result = true;
                 if (munger < mungers.length -1) {
                     result = _munge(current.flush(),munger+1);
                 }

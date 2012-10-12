@@ -42,11 +42,12 @@ public class CorpusToNetworkGenerator<T extends Windowable> {
 
     public List<Network> analyze() {
         List<Network> results = new ArrayList<Network>();
-
+        log.info("Will process "+bmodel.getNumWindows()+" windows");
         for (int win = 0; win < bmodel.getNumWindows(); win++) {
+            log.debug("Process window "+win);
             results.add(analyzeWindow(win));
         }
-        log.debug("Done processing windows");
+        log.info("Done processing windows");
         return results;
     }
 
@@ -56,7 +57,7 @@ public class CorpusToNetworkGenerator<T extends Windowable> {
 
         for (List<T> bin : bins) {
             if (!bin.isEmpty()) {
-                JungUtils.merge(graph, (Graph<Node, Edge>) calculator.calculateWeights(getTokens(bin)), JungUtils.MergePolicy.ADD);
+                JungUtils.merge(graph, (Graph<Node, Edge>) calculator.calculateWeights(getTokens(bin)), JungUtils.MergePolicy.ADD_MAX_1);
             }
         }
         return graph;

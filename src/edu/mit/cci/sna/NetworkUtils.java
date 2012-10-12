@@ -1,8 +1,12 @@
 package edu.mit.cci.sna;
 
+import edu.mit.cci.sna.impl.EdgeImpl;
+import edu.mit.cci.sna.impl.NodeImpl;
 import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,6 +35,15 @@ public class NetworkUtils {
 
             return (float) fromedges.size() / denom;
         }
+    }
+
+    public static float similarity(Network one, Network two) {
+        if (one == null || two == null || one.getNodes().isEmpty() || two.getNodes().isEmpty()) return 0f;
+        Set<Edge> intersection = new HashSet<Edge>(one.getEdges());
+        intersection.retainAll(two.getEdges());
+        Set<Edge> union = new HashSet<Edge>(one.getEdges());
+        union.addAll(two.getEdges());
+        return intersection.size() / (float) union.size();
     }
 
     public static List<Clique> findCliquesContaining(UndirectedJungNetwork graph, Set<Node> nodes, int k) {
@@ -100,8 +113,8 @@ public class NetworkUtils {
     }
 
     public static void filterEdges(Network currentGraph, float minimumLinkWeight) {
-        for (Edge e:new ArrayList<Edge>(currentGraph.getEdges())) {
-            if (e.getWeight()<minimumLinkWeight) currentGraph.remove(e);
+        for (Edge e : new ArrayList<Edge>(currentGraph.getEdges())) {
+            if (e.getWeight() < minimumLinkWeight) currentGraph.remove(e);
 
         }
     }
@@ -116,5 +129,33 @@ public class NetworkUtils {
         }
         output.flush();
         output.close();
+    }
+
+    public static String simpleString(Network n) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Net[");
+        for (Node node:n.getNodes()) {
+            builder.append(node.getLabel()).append(",");
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+
+
+
+    public static Network readNetworkFile(File f) throws IOException {
+        //String filename = prefix + "." + System.currentTimeMillis() + Math.random() + ".net";
+        UndirectedJungNetwork network = new UndirectedJungNetwork();
+        BufferedReader reader = new BufferedReader(new FileReader(f));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            if (line.isEmpty() || line.startsWith("#")) continue;
+
+
+            String[] tokens = line.split("\\s+");
+            network.add(new EdgeImpl(new NodeImpl(tokens[0]), new NodeImpl(tokens[1]), Float.parseFloat(tokens[2]), false));
+        }
+        return network;
     }
 }

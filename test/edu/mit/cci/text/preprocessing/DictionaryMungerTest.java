@@ -33,8 +33,8 @@ public class DictionaryMungerTest extends TestCase {
                 {"one","two"},
                 {"one","two","three"}
         };
-        String[] input= "one little native americans one two three did i stutter one".split(" ");
-        String[] expect = "two little native americans three three did i stutter two".split(" ");
+        String[] input= "one little native two americans one two three did i stutter one".split(" ");
+        String[] expect = "two little native two americans three three did i stutter two".split(" ");
         List<String> result = new ArrayList<String>();
 
 

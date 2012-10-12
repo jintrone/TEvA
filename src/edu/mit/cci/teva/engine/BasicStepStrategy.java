@@ -2,8 +2,11 @@ package edu.mit.cci.teva.engine;
 
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.NetworkUtils;
+import edu.mit.cci.teva.cpm.cfinder.CFinderCommunityFinder;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,9 +34,13 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
     }
 
+    public void setModel(CommunityModel model) {
+        this.model = model;
+    }
+
     public void processStep(int i, List<CommunityFrame> fromcliques, List<Network> mergedcliques, List<CommunityFrame> tocliques) {
         log.debug(i + ". From: " + fromcliques);
-        log.debug(i + ". Thru: " + mergedcliques);
+        log.debug(i + ". Thru: " + mergedcliques.size() + " merged cliques");
         log.debug(i + ". To: " + tocliques);
         if (fromcliques == null && tocliques == null) {
             log.debug(i + ". NO COMMUNITIES FOR WINDOW, skipping...");
@@ -43,7 +50,7 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
         Set<CommunityFrame> accounting = new HashSet<CommunityFrame>();
         for (Network vinfo : mergedcliques) {
-            log.debug("Processing Window:" + i + " Merged clique:" + vinfo);
+            log.debug("Processing Window:" + i + " Merged communities:" + NetworkUtils.simpleString(vinfo));
 
             List<CommunityFrame> f = new ArrayList<CommunityFrame>();
             List<CommunityFrame> t = new ArrayList<CommunityFrame>();
@@ -54,21 +61,23 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
                     if (vinfo.getEdges().containsAll(info.getEdges())) {
                         f.add(info);
                         accounting.add(info);
+                        log.info("Adding FROM as candidate: " + NetworkUtils.simpleString(info));
                     } else {
 
                     }
                 }
             }
 
-
+            log.debug("Process from cliques");
             if (tocliques != null) {
                 for (CommunityFrame info : tocliques) {
 
                     if (vinfo.getEdges().containsAll(info.getEdges())) {
                         t.add(info);
                         accounting.add(info);
+                        log.info("Adding TO as candidate: " + NetworkUtils.simpleString(info));
                     } else {
-                        log.warn("Not adding info " + info);
+
 
                     }
                 }
@@ -211,9 +220,41 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
 
     private void addCommunityForFrame(CommunityFrame frame) {
-        Community c = new Community();
+        Community c = Community.create();
         c.addFrame(frame);
         model.addCommunity(c);
     }
+
+    public static void main(String[] args) throws IOException, CommunityFinderException {
+
+
+        TevaParameters param = new TevaParameters();
+        param.setProperty(TevaParameters.WORKING_DIRECTORY, "../REASONTEVA/work");
+        BasicStepStrategy step = new BasicStepStrategy(new CommunityModel(),param);
+
+        CFinderCommunityFinder finder = new CFinderCommunityFinder(false, false, new TevaParameters());
+        File one = new File("../REASONTEVA/work/CFinderNetwork.TEvA.0.net");
+        File two = new File("../REASONTEVA/work/CFinderNetwork.TEvA.1.net");
+
+        Network none = NetworkUtils.readNetworkFile(one);
+        Network ntwo = NetworkUtils.readNetworkFile(two);
+
+        List<CommunityFrame> frames1 = finder.findCommunities(one, 4, 0);
+        List<CommunityFrame> frames2 = finder.findCommunities(two, 4, 1);
+
+        FastMergeStrategy strategy = new FastMergeStrategy(4);
+        List<Network> result = strategy.process(none, frames1, ntwo, frames2);
+        for (Network n : result) {
+            log.debug("Network: " + n.getNodes());
+        }
+
+        step.processStep(0,frames1,result,frames2);
+
+
+
+
+
+    }
+
 
 }

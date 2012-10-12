@@ -6,6 +6,7 @@ import edu.mit.cci.sna.Node;
 import edu.mit.cci.sna.impl.EdgeImpl;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
+import org.apache.log4j.Logger;
 
 import java.util.Collection;
 
@@ -18,6 +19,7 @@ public class UndirectedJungNetwork extends UndirectedSparseMultigraph<Node,Edge>
 
     public UndirectedJungNetwork() {}
 
+    Logger log = Logger.getLogger(UndirectedJungNetwork.class);
 
     public UndirectedJungNetwork(DirectedJungNetwork copy) {
         for (Edge edge:copy.getEdges()){
@@ -52,8 +54,13 @@ public class UndirectedJungNetwork extends UndirectedSparseMultigraph<Node,Edge>
     }
 
     public Edge addEdge(Node node1, Node node2, float weight) {
-        Edge e = new EdgeImpl(node1,node2,weight,false);
-        this.addEdge(e,node1,node2);
+        Edge e = findEdge(node1,node2);
+        if (e!=null) {
+            log.debug("Already added edge, updating weight");
+        }  else {
+            e = new EdgeImpl(node1,node2,weight,false);
+            this.addEdge(e,node1,node2);
+        }
         return e;
     }
 

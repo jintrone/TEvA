@@ -1,5 +1,8 @@
 package edu.mit.cci.sna;
 
+import edu.mit.cci.sna.impl.EdgeImpl;
+
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Map;
 
 /**
@@ -9,6 +12,8 @@ import java.util.Map;
  * Date: 9/21/12
  * Time: 3:54 PM
  */
+
+@XmlJavaTypeAdapter(EdgeImpl.JaxbAdapter.class)
 public interface Edge {
 
     public Node[] getEndpoints();

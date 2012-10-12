@@ -1,6 +1,14 @@
 package edu.mit.cci.teva.engine;
 
 
+import edu.mit.cci.teva.serialization.CommunityFrameMapJaxbAdapter;
+
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,13 +21,19 @@ import java.util.Set;
  * Date: 10/1/12
  * Time: 10:32 PM
  */
+
+@XmlRootElement(name = "Community")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Community {
 
     public static int ID_COUNT = 0;
 
+
+    @XmlJavaTypeAdapter(CommunityFrameMapJaxbAdapter.class)
     public Map<Integer, CommunityFrame> history = new HashMap<Integer, CommunityFrame>();
 
-    public int id;
+    @XmlID
+    public String id;
 
     public boolean expired = false;
 
@@ -32,24 +46,28 @@ public class Community {
     }
 
 
-    public int maxbin = -1;
-    public int minbin = -1;
+    private int maxbin = -1;
+    private int minbin = -1;
 
     public static void reset() {
         ID_COUNT = 0;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public Community() {
-        this(ID_COUNT++);
+    private Community() {
+
 
     }
 
+    public static Community create() {
+        return new Community(ID_COUNT++);
+    }
+
     public Community(int id) {
-        this.id = id;
+        this.id = id+"";
         ID_COUNT = Math.max(ID_COUNT, id);
 
     }
@@ -64,7 +82,21 @@ public class Community {
 
 
     public int getMaxBin() {
+        if (maxbin == -1 && !history.isEmpty()) {
+            for (int key:history.keySet()) {
+                maxbin = Math.max(maxbin,key);
+            }
+        }
         return maxbin;
+    }
+
+    public int getMinBin() {
+       if (maxbin == -1 && !history.isEmpty()) {
+            for (int key:history.keySet()) {
+                minbin = (minbin==-1)?key:Math.min(minbin, key);
+            }
+        }
+        return minbin;
     }
 
 
@@ -104,6 +136,16 @@ public class Community {
 
     public String toString() {
         return getName();
+    }
+
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        for (CommunityFrame f:history.values()) {
+            f.setCommunity(this);
+        }
+    }
+
+    public boolean equals(Community c) {
+        return this.getId().equals(c.getId()) && history.values().equals(c.history.values());
     }
 
     private List<String> representation = null;

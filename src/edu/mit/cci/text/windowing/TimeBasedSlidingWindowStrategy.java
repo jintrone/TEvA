@@ -3,6 +3,7 @@ package edu.mit.cci.text.windowing;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -85,6 +86,15 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         List<Windowable> result = current.subList(first, last);
 
         return result;
+    }
+
+    public Date[][] getWindowBoundaries() {
+       List<Date[]> dates = new ArrayList<Date[]>();
+        for (int i = 0;i<getNumberWindows();i++) {
+            dates.add(getWindowBounds(i));
+        }
+        return dates.toArray(new Date[dates.size()][]);
+
     }
 
 

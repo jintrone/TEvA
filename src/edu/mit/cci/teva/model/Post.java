@@ -1,5 +1,7 @@
 package edu.mit.cci.teva.model;
 
+import edu.mit.cci.text.windowing.Windowable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  * Date: 8/10/11
  * Time: 5:20 PM
  */
-public interface Post {
+public interface Post  {
     String getThreadid();
 
     String getPostid();

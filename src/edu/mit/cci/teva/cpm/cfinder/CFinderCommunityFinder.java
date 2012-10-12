@@ -8,6 +8,7 @@ import edu.mit.cci.teva.engine.CommunityFinderException;
 import edu.mit.cci.teva.engine.CommunityFrame;
 import edu.mit.cci.teva.engine.TevaParameters;
 import edu.mit.cci.util.U;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.List;
 public class CFinderCommunityFinder implements CommunityFinder {
 
 
+    private static Logger log = Logger.getLogger(CFinderCommunityFinder.class);
     private static String CFINDER_NET_NAME = "CFinderNetwork";
 
     private File outputdir;
@@ -33,18 +35,18 @@ public class CFinderCommunityFinder implements CommunityFinder {
 
 
 
-    public CFinderCommunityFinder(File outputdir, boolean overwriteNetworks, boolean overwriteAnalysis, TevaParameters params) {
+    public CFinderCommunityFinder(boolean overwriteNetworks, boolean overwriteAnalysis, TevaParameters params) {
         this.overwriteNetworks = overwriteNetworks;
         this.overwriteAnalysis = overwriteAnalysis;
-        this.outputdir = outputdir;
+        this.outputdir = new File(params.getWorkingDirectory());
         cFinderRunner = new CFinderRunner(params.getCFinderExecutable(), params.getCFinderLicensePath());
         cFinderRunner.setParam(CFinderRunner.CommandLineParams.CLIQUE_SIZE, "" + params.getFixedCliqueSize());
         cFinderRunner.setParam(CFinderRunner.CommandLineParams.MIN_WEIGHT, "" + params.getMinimumLinkWeight());
     }
 
 
-    public File getNetworkFile(int window, String id) {
-        return new File(outputdir, CFINDER_NET_NAME + "." + id + "." + window);
+    public static File getNetworkFile(File outputdir, int window, String id) {
+        return new File(outputdir, CFINDER_NET_NAME + "." + id + "." + window+".net");
     }
 
     public File getAnalysisOutputDirectory(File networkFile) {
@@ -55,8 +57,10 @@ public class CFinderCommunityFinder implements CommunityFinder {
         File baseAnalysisDir = getAnalysisOutputDirectory(networkFile);
         File analysisDir = new File(baseAnalysisDir, "/k=" + cliqueSizeAtWindow);
         try {
-            if (!analysisDir.exists() || overwriteAnalysis) {
+            if (analysisDir.exists() && overwriteAnalysis) {
                 U.delete(analysisDir);
+            }
+            if (!analysisDir.exists()) {
                 cFinderRunner.setParam(CFinderRunner.CommandLineParams.OUTPUT, baseAnalysisDir.getAbsolutePath());
                 cFinderRunner.process(networkFile, false);
             }
@@ -82,10 +86,11 @@ public class CFinderCommunityFinder implements CommunityFinder {
 
 
     public List<CommunityFrame> findCommunities(Network currentGraph, int cliqueSizeAtWindow, int window, String id) throws CommunityFinderException {
-        File networkFile = getNetworkFile(window, id);
+        File networkFile = getNetworkFile(this.outputdir,window, id);
         if (!networkFile.exists() || overwriteNetworks) {
             try {
                 U.delete(networkFile);
+                log.debug("Attempting to create file at: "+networkFile.getAbsolutePath());
                 NetworkUtils.createNetworkFile(currentGraph, networkFile);
             } catch (IOException e) {
                 throw new CommunityFinderException("Error creating network file",e);
@@ -94,4 +99,7 @@ public class CFinderCommunityFinder implements CommunityFinder {
         }
         return findCommunities(networkFile, cliqueSizeAtWindow, window);
     }
+
+
+
 }
