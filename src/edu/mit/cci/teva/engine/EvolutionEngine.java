@@ -23,9 +23,6 @@ public class EvolutionEngine {
 
     private static Logger logProcess = Logger.getLogger(EvolutionEngine.class);
     private static Logger log = Logger.getLogger(EvolutionEngine.class);
-    List<Network> graphs;
-    List<File> files;
-    int size = 0;
 
 
     EvolutionStepStrategy stepStrategy;

@@ -1,7 +1,13 @@
 package edu.mit.cci.teva.engine;
 
+import edu.mit.cci.teva.serialization.ParameterAdapter;
 import edu.mit.cci.teva.util.ScoringMethod;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +18,8 @@ import java.util.Properties;
  * Date: 10/2/12
  * Time: 11:57 AM
  */
+
+@XmlJavaTypeAdapter(ParameterAdapter.class)
 public class TevaParameters extends Properties {
 
 
@@ -32,6 +40,8 @@ public class TevaParameters extends Properties {
     private static final String OVERWRITE_NETWORKS = "overwrite_networks";
     private static final String OVERWRITE_ANALYSES  = "overwrite_analyses";
     private static final String SKIP_NETWORK_GENERATION = "skip_network_generation";
+    private static final String MEMBERSHIP_WINDOW_SIZE = "membership_window_size";
+    private static final String MEMBERSHIP_WINDOW_DELTA = "membership_window_delta";
 
 
     public TevaParameters(InputStream input) throws IOException {
@@ -51,9 +61,12 @@ public class TevaParameters extends Properties {
      *
      * @return
      */
+
+    
     public float getMinimumLinkWeight() {
         return Float.parseFloat(getProperty(MINIMUM_LINK_WEIGHT, ".5"));
     }
+
 
     public void setMinimumLinkWeight(float f) {
         this.setProperty(MINIMUM_LINK_WEIGHT,f+"");
@@ -63,6 +76,7 @@ public class TevaParameters extends Properties {
      * Clique size for community extraction
      * @return
      */
+    
     public int getFixedCliqueSize() {
         return Integer.parseInt(getProperty(FIXED_CLIQUE_SIZE,"4"));
     }
@@ -77,6 +91,7 @@ public class TevaParameters extends Properties {
      * communities
      * @return
      */
+    
     public boolean expireConsumedCommunities() {
         return Boolean.parseBoolean(getProperty(EXPIRE_CONSUMED_COMMUNITIES,"false"));
     }
@@ -90,6 +105,7 @@ public class TevaParameters extends Properties {
      * Scoring method to be used when establishing the mapping between communities in subsequent time steps
      * @return
      */
+    
     public ScoringMethod getScoringMethod() {
         String method = getProperty(SCORING_METHOD,"SIMILARITY");
         return ScoringMethod.Method.valueOf(method);
@@ -99,6 +115,7 @@ public class TevaParameters extends Properties {
         setProperty(SCORING_METHOD,method);
     }
 
+    
     public String getCFinderExecutable() {
         return getProperty(CFINDER_EXECUTABLE_PATH);
     }
@@ -107,6 +124,7 @@ public class TevaParameters extends Properties {
         setProperty(CFINDER_EXECUTABLE_PATH,s);
     }
 
+    
     public String getCFinderLicensePath() {
         return getProperty(CFINDER_LICENSE_PATH);
     }
@@ -115,6 +133,7 @@ public class TevaParameters extends Properties {
         setProperty(CFINDER_LICENSE_PATH,path);
     }
 
+    
     public String getFilenameIdentifier() {
         return getProperty(FILENAME_IDENITIFIER,"TEvA");
     }
@@ -123,59 +142,109 @@ public class TevaParameters extends Properties {
         setProperty(FILENAME_IDENITIFIER,id);
     }
 
-    public static void main(String[] args) throws IOException {
-        TevaParameters params = new TevaParameters();
-        params.setCFinderExecutable("/usr/local/bin/cfinder");
-        params.setCFinderLicensePath("/Applications/CFinder-v2.0.5/licence.txt");
-        params.setExpireConsumedCommunities(true);
-        params.setFilenameIdentifier("TEvA");
-        params.setMinimumLinkWeight(.5f);
-        params.setFixedCliqueSize(4);
-        params.setScoringMethod("SIMILARITY");
 
-        params.store(new FileWriter("resources/teva.properties"), "resources/teva.properties");
-
-
+    public void setReplacementDictionary(String file) {
+        setProperty(WORD_REPLACEMENT_DICTIONARY,file);
     }
 
+    
     public String getReplacementDictionary() {
         return getProperty(WORD_REPLACEMENT_DICTIONARY,null);
     }
 
+
+    public void setStopwordList(String stopwordList) {
+        setProperty(STOPWORD_LIST,stopwordList);
+    }
+
+    
     public String getStopwordList() {
         return getProperty(STOPWORD_LIST,null);
     }
 
+    public void setWindowSize(long size) {
+        setProperty(SLIDING_WINDOW_SIZE,size+"");
+    }
+
+    
     public long getWindowSize() {
         return Long.parseLong(getProperty(SLIDING_WINDOW_SIZE, "-1"));
     }
 
+    public void setWindowDelta(long delta) {
+        setProperty(SLIDING_WINDOW_DELTA,delta+"");
+    }
+
+    
     public long getWindowDelta() {
         return Long.parseLong(getProperty(SLIDING_WINDOW_DELTA,"-1"));
     }
 
+    public void setWordijIndirection(int size) {
+        setProperty(WORDIJ_INDIRECTION_SIZE,size+"");
+    }
+
+    
     public int getWordijIndirection() {
         return Integer.parseInt(getProperty(WORDIJ_INDIRECTION_SIZE,3+""));
     }
 
+    public void setWordijTupleSize(int size) {
+        setProperty(WORDIJ_TUPLE_SIZE,size+"");
+    }
+
+    
     public int getWordijTupleSize() {
 
         return Integer.parseInt(getProperty(WORDIJ_TUPLE_SIZE,2+""));
     }
 
+    public void setWorkingDirectory(String s) {
+        setProperty(WORKING_DIRECTORY,s);
+    }
+
+    
     public String getWorkingDirectory() {
         return getProperty(WORKING_DIRECTORY,"/temp");
+    }
+
+    public void setOverwriteNetworks(boolean b) {
+        setProperty(OVERWRITE_NETWORKS,b+"");
     }
 
     public boolean getOverwriteNetworks() {
         return Boolean.parseBoolean(getProperty(OVERWRITE_NETWORKS, false + ""));
     }
 
+    public void setOverwriteAnalyses(boolean b) {
+        setProperty(OVERWRITE_ANALYSES,b+"");
+    }
+
     public boolean getOverwriteAnalyses() {
         return Boolean.parseBoolean(getProperty(OVERWRITE_ANALYSES, true + ""));
     }
 
+    public void setSkipNetworkGeneration(boolean b) {
+        setProperty(SKIP_NETWORK_GENERATION,b+"");
+    }
+
     public boolean getSkipNetworkGeneration() {
         return Boolean.parseBoolean(getProperty(SKIP_NETWORK_GENERATION,false+""));
+    }
+
+    public void setMembershipWindowSize(long l) {
+        setProperty(MEMBERSHIP_WINDOW_SIZE,l+"");
+    }
+
+    public long getMembershipWindowSize() {
+       return Long.parseLong(getProperty(MEMBERSHIP_WINDOW_SIZE,"30000"));
+    }
+
+    public long getMembershipWindowDelta() {
+        return Long.parseLong(getProperty(MEMBERSHIP_WINDOW_DELTA,"30000"));
+    }
+
+    public void setMembershipWindowDelta(long membershipWindowDelta) {
+        setProperty(MEMBERSHIP_WINDOW_DELTA,""+membershipWindowDelta);
     }
 }

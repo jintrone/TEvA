@@ -29,4 +29,16 @@ public class WindowablePostAdapter implements Windowable {
     public List<String> getTokens() {
        return tokenizer.tokenize(post.getContent());
     }
+
+    public String getRawData() {
+        return post.getContent();
+    }
+
+    public String getId() {
+        return post.getPostid();
+    }
+
+    public Post getPost() {
+        return post;
+    }
 }

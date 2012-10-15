@@ -1,5 +1,6 @@
 package edu.mit.cci.util;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -150,5 +151,18 @@ public class U {
             }
         }
         return result.toArray(new String[result.size()]);
+    }
+
+
+     public static File getAnyFile(String message, String file) {
+        JFileChooser chooser = new JFileChooser(file);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        if (message != null && !message.isEmpty()) chooser.setDialogTitle(message);
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File f = chooser.getSelectedFile();
+
+            return f;
+        } else return null;
     }
 }

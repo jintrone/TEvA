@@ -2,13 +2,16 @@ package edu.mit.cci.teva.engine;
 
 
 import edu.mit.cci.teva.serialization.CommunityFrameMapJaxbAdapter;
+import edu.mit.cci.text.windowing.Windowable;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +30,10 @@ import java.util.Set;
 public class Community {
 
     public static int ID_COUNT = 0;
+
+
+    @XmlElement(name = "assignment")
+    private List<ConversationChunk> assignments = new ArrayList<ConversationChunk>();
 
 
     @XmlJavaTypeAdapter(CommunityFrameMapJaxbAdapter.class)
@@ -148,7 +155,10 @@ public class Community {
         return this.getId().equals(c.getId()) && history.values().equals(c.history.values());
     }
 
-    private List<String> representation = null;
+
+    public void addAssignment(ConversationChunk chunk) {
+      assignments.add(chunk);
+    }
 
 //    public List<String> getMaximalRepresentation() {
 //       if (representation == null) {

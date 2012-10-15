@@ -73,13 +73,11 @@ public class CommunityModelTest extends TestCase {
         c1.addFrame(frame3);
 
 
-        CommunityModel model = new CommunityModel();
+        CommunityModel model = new CommunityModel(new TevaParameters(),new Date[][] {
+                {new Date(),new Date()},
+                {new Date(),new Date()}},"TestCorpus");
         model.addCommunity(c);
         model.addCommunity(c1);
-        model.setWindows(new Date[][] {
-                {new Date(),new Date()},
-                {new Date(),new Date()}
-        });
 
         model.addConnection(3,.4f, CommunityModel.ConnectionType.INFORMS,c,c1);
         model.addConnection(9,.8f, CommunityModel.ConnectionType.SPAWNS,c1,c);

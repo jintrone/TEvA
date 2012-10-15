@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -165,7 +166,7 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
                     //logProcess.debug(i + ". Already assigned to clique:" + pair.getPair()[1]);
                     log.debug(i + ". Expire " + pair.getPair()[0]);
                     log.debug(i + ". SET PROGENITOR of " + pair.getPair()[1].getCommunity() + " to " + pair.getPair()[0].getCommunity() + " at " + i);
-                    model.addConnection(i, NetworkUtils.coverage(pair.getPair()[0], pair.getPair()[1]), CommunityModel.ConnectionType.CONSUMS, pair.getPair()[0].getCommunity(), pair.getPair()[1].getCommunity());
+                    model.addConnection(i, NetworkUtils.coverage(pair.getPair()[0], pair.getPair()[1]), CommunityModel.ConnectionType.CONSUMES, pair.getPair()[0].getCommunity(), pair.getPair()[1].getCommunity());
 
 
                     if (params.expireConsumedCommunities()) {
@@ -230,7 +231,7 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
         TevaParameters param = new TevaParameters();
         param.setProperty(TevaParameters.WORKING_DIRECTORY, "../REASONTEVA/work");
-        BasicStepStrategy step = new BasicStepStrategy(new CommunityModel(),param);
+        BasicStepStrategy step = new BasicStepStrategy(new CommunityModel(param,new Date[][]{},"TestCorpus"),param);
 
         CFinderCommunityFinder finder = new CFinderCommunityFinder(false, false, new TevaParameters());
         File one = new File("../REASONTEVA/work/CFinderNetwork.TEvA.0.net");

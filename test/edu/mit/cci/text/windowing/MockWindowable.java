@@ -90,6 +90,16 @@ public class MockWindowable implements Windowable {
         return data;
     }
 
+    public String getRawData() {
+        return data.toString();
+    }
+
+    public String getId() {
+        return hashCode()+"";
+    }
+
+
+
 
     public String toString() {
         return "MockWindow:"+getStart()+":"+data.size();

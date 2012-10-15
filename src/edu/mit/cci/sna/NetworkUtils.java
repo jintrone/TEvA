@@ -25,6 +25,13 @@ import java.util.Set;
  */
 public class NetworkUtils {
 
+    /**
+     * Ratio of one's edges contained by two
+     *
+     * @param one
+     * @param two
+     * @return
+     */
     public static float coverage(Network one, Network two) {
         if (one == null || two == null || one.getNodes().isEmpty() || two.getNodes().isEmpty()) {
             return 0f;

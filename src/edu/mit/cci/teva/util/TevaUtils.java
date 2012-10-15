@@ -1,8 +1,17 @@
 package edu.mit.cci.teva.util;
 
 import edu.mit.cci.sna.Clique;
+import edu.mit.cci.sna.Edge;
+import edu.mit.cci.sna.Network;
+import edu.mit.cci.sna.Node;
+import edu.mit.cci.sna.impl.NodeImpl;
+import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import edu.mit.cci.teva.engine.CommunityFrame;
+import edu.mit.cci.teva.engine.CommunityModel;
+import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
+import edu.uci.ics.jung.algorithms.scoring.EigenvectorCentrality;
+import org.apache.commons.collections15.Transformer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -14,6 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: jintrone
@@ -52,6 +67,44 @@ public class TevaUtils {
 
     }
 
+    public static CommunityModel getCommunityModelFromFile(File file) throws JAXBException, FileNotFoundException {
+        return deserialize(file,CommunityModel.class);
+    }
+
+    public static List<String> getCommunityRepresentation(Network c, int size) {
+        UndirectedJungNetwork graph = new UndirectedJungNetwork();
+        List<String> s = new ArrayList<String>();
+
+        for (Edge e : c.getEdges()) {
+            graph.add(e);
+        }
+
+        final EigenvectorCentrality<Node, Edge> ev = new EigenvectorCentrality<Node, Edge>(graph, new Transformer<Edge, Float>() {
+            public Float transform(Edge e) {
+                return e.getWeight();
+            }
+        });
+        ev.evaluate();
+        List<Node> sortedlist = new ArrayList<Node>(graph.getVertices());
+        Collections.sort(sortedlist, new Comparator<Node>() {
+            public int compare(Node defaultJungNode, Node defaultJungNode1) {
+                double score1 = ev.getVertexScore(defaultJungNode);
+                double score2 = ev.getVertexScore(defaultJungNode1);
+                if (score1 < score2) return 1;
+                else if (score2 == score1) return 0;
+                else return -1;
+
+            }
+        }
+        );
+
+        for (int i = 0; i < Math.min(size, sortedlist.size()); i++) {
+            s.add(sortedlist.get(i).getLabel());
+        }
+        return s;
+
+
+    }
 
 
 
