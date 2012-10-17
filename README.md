@@ -6,7 +6,7 @@ Algorithmically, TEvA is a mashup of a community evolution algorithm [1] and an 
 
 CODE
 ****
-This software framework is intended as a reusable, extensible library.  It currently depends upon CFinder for the underlying clique percolation algorithm, a proprietary application available for educational use at http://cfinder.org.  In the near future, I will be switching to a faster, open-source implementation of the algorithm, available at http://sourceforge.net/p/cosparallel/wiki/Home/.
+This software framework is intended as a reusable, extensible library.  It currently depends upon CFinder for the underlying clique percolation algorithm, a proprietary application available for educational use at http://cfinder.org.  In the near future, I will be switching to a faster, open-source implementation of the algorithm, described in [5] and available for download at http://sourceforge.net/p/cosparallel/wiki/Home/.
 
 TEvA is licensed under the MIT License.  Use it however you want.  Citations are always appreciated (see [4]). :-)
 
