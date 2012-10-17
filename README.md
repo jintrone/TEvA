@@ -18,6 +18,6 @@ REFERENCES
 
 [3] TextFlow: Towards Better Understanding of Evolving Topics in Text. Visualization and Computer Graphics, IEEE Transactions on 17, 12 (2011), 2412–2421.
 
-[4] Introne, J. and Drecher, M. Analyzing the Flow of Knowledge in Computer Mediated Teams. Proceedings of Computer Supported Cooperative Work, 2013.
+[4] Introne, J. and Drecher, M. Analyzing the Flow of Knowledge in Computer Mediated Teams. Proceedings of Computer Supported Cooperative Work, 2013. (draft available at http://www.academia.edu/2037735/Analyzing_the_Flow_of_Knowledge_in_Computer_Mediated_Teams)
 
 [5] Enrico Gregori, Luciano Lenzini, Simone Mainardi, "Parallel k-Clique Community Detection on Large-Scale Networks," IEEE Transactions on Parallel and Distributed Systems, 31 Aug. 2012. IEEE computer Society Digital Library. IEEE Computer Society, <http://doi.ieeecomputersociety.org/10.1109/TPDS.2012.229>
