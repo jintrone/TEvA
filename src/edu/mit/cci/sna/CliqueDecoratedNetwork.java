@@ -1,6 +1,6 @@
 package edu.mit.cci.sna;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -13,5 +13,5 @@ public interface CliqueDecoratedNetwork extends Network {
     public Set<Clique> getCliques();
 
 
-    public void addCliques(List<Clique> cliques);
+    public void addCliques(Collection<Clique> cliques);
 }

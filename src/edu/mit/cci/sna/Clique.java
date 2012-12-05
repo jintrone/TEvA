@@ -16,7 +16,7 @@ import java.util.Set;
  * Date: 6/19/12
  * Time: 6:54 AM
  */
-@XmlRootElement(name="Clique")
+@XmlRootElement(name = "Clique")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Clique {
 
@@ -27,19 +27,20 @@ public class Clique {
 
 
     public Clique() {
-        setId(MAX_ID+1);
+        setId(MAX_ID + 1);
     }
 
     private void setId(int id) {
         this.id = id;
-        MAX_ID = Math.max(id,MAX_ID);
+        MAX_ID = Math.max(id, MAX_ID);
     }
 
-    public Clique(int localId)  {
+    public Clique(int localId) {
         setId(localId);
     }
 
-    public Clique(int localId, Collection<String> nodes)  {
+
+    public Clique(int localId, Collection<String> nodes) {
         this.nodes.addAll(nodes);
         setId(localId);
     }
@@ -53,17 +54,23 @@ public class Clique {
         this.nodes.addAll(nodes);
     }
 
+    public void setUsingNodes(Collection<Node> nodes) {
+        for (Node n:nodes) {
+            this.nodes.add(n.getLabel());
+        }
+    }
+
     @XmlElement(name = "node")
     public Set<String> getNodes() {
         return nodes;
     }
 
     public boolean equals(Object o) {
-        return (o instanceof Clique && ((Clique)o).getNodes().equals(nodes));
+        return (o instanceof Clique && ((Clique) o).getNodes().equals(nodes));
     }
 
     public int hashCode() {
-        return (nodes.hashCode()+Clique.class.hashCode())*7-13;
+        return (nodes.hashCode() + Clique.class.hashCode()) * 7 - 13;
     }
 
     public int overlap(Clique c) {
@@ -75,19 +82,19 @@ public class Clique {
     public Collection<Set<String>> getEdgeSet() {
         List<Set<String>> result = new ArrayList<Set<String>>();
         String[] s = nodes.toArray(new String[nodes.size()]);
-        for (int i = 0;i<s.length;i++) {
-           for (int j = i+1;j<s.length;j++) {
-               Set<String> pair = new HashSet<String>();
-               result.add(pair);
-               pair.add(s[i]);
-               pair.add(s[j]);
-           }
+        for (int i = 0; i < s.length; i++) {
+            for (int j = i + 1; j < s.length; j++) {
+                Set<String> pair = new HashSet<String>();
+                result.add(pair);
+                pair.add(s[i]);
+                pair.add(s[j]);
+            }
         }
         return result;
     }
 
     public String toString() {
-        return "Clique "+id+": "+getNodes();
+        return "Clique " + id + ": " + getNodes();
 
     }
 

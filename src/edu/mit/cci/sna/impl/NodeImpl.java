@@ -1,14 +1,11 @@
 package edu.mit.cci.sna.impl;
 
-import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Node;
 import org.apache.commons.collections15.Factory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;

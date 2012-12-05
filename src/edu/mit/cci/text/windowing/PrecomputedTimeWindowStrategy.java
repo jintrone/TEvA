@@ -2,11 +2,9 @@ package edu.mit.cci.text.windowing;
 
 import edu.mit.cci.util.U;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**

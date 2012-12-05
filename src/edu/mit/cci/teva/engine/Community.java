@@ -2,7 +2,6 @@ package edu.mit.cci.teva.engine;
 
 
 import edu.mit.cci.teva.serialization.CommunityFrameMapJaxbAdapter;
-import edu.mit.cci.text.windowing.Windowable;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;

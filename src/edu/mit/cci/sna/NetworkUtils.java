@@ -126,13 +126,13 @@ public class NetworkUtils {
         }
     }
 
-    public static void createNetworkFile(Network adapter, File f) throws IOException {
+    public static void createNetworkFile(Network adapter, File f, boolean edgeWeights) throws IOException {
         //String filename = prefix + "." + System.currentTimeMillis() + Math.random() + ".net";
 
         PrintWriter output = new PrintWriter(new FileWriter(f));
         output.println("#" + new Date());
         for (Edge e : adapter.getEdges()) {
-            output.println(e.getEndpoints()[0].getLabel() + " " + e.getEndpoints()[1].getLabel() + " " + e.getWeight());
+            output.println(e.getEndpoints()[0].getLabel() + " " + e.getEndpoints()[1].getLabel() + (edgeWeights?" " + e.getWeight():""));
         }
         output.flush();
         output.close();

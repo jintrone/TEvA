@@ -1,7 +1,6 @@
 package edu.mit.cci.sna;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Simple wrapper around a generic network

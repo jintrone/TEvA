@@ -2,7 +2,6 @@ package edu.mit.cci.util;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -164,5 +163,16 @@ public class U {
 
             return f;
         } else return null;
+    }
+
+    public static boolean move(File f, File dest) {
+        File actualdest;
+        if (dest.isFile()) {
+            actualdest = dest;
+        } else {
+            actualdest = new File(dest,f.getName());
+        }
+        return f.renameTo(actualdest);
+
     }
 }

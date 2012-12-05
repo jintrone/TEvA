@@ -1,7 +1,5 @@
 package edu.mit.cci.teva.model;
 
-import edu.mit.cci.text.windowing.Windowable;
-
 import java.util.Date;
 import java.util.List;
 

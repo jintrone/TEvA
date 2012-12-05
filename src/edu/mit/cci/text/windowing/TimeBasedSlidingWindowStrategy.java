@@ -1,6 +1,5 @@
 package edu.mit.cci.text.windowing;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

@@ -4,7 +4,6 @@ import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.Node;
 import edu.mit.cci.sna.impl.EdgeImpl;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import org.apache.log4j.Logger;
 

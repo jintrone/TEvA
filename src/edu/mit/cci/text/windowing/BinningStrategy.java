@@ -1,6 +1,5 @@
 package edu.mit.cci.text.windowing;
 
-import java.util.Date;
 import java.util.List;
 
 /**

@@ -8,7 +8,6 @@ import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 

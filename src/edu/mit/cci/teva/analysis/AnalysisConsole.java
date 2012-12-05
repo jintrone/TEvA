@@ -5,7 +5,6 @@ import edu.mit.cci.util.ConsoleBase;
 import edu.mit.cci.util.ConsoleDocumentation;
 import edu.mit.cci.util.U;
 
-import javax.swing.*;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileNotFoundException;

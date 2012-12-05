@@ -3,7 +3,6 @@ package edu.mit.cci.teva.engine;
 import edu.mit.cci.sna.Network;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**

@@ -7,7 +7,6 @@ import edu.mit.cci.sna.Node;
 import edu.mit.cci.sna.impl.EdgeImpl;
 import edu.mit.cci.sna.impl.NodeImpl;
 import edu.mit.cci.sna.jung.UndirectedJungNetwork;
-import edu.mit.cci.text.preprocessing.Tokenizer;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import org.apache.log4j.Logger;
 

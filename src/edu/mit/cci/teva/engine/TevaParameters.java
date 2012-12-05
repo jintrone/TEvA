@@ -3,12 +3,7 @@ package edu.mit.cci.teva.engine;
 import edu.mit.cci.teva.serialization.ParameterAdapter;
 import edu.mit.cci.teva.util.ScoringMethod;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -42,6 +37,8 @@ public class TevaParameters extends Properties {
     private static final String SKIP_NETWORK_GENERATION = "skip_network_generation";
     private static final String MEMBERSHIP_WINDOW_SIZE = "membership_window_size";
     private static final String MEMBERSHIP_WINDOW_DELTA = "membership_window_delta";
+    private static final String COS_MAX_CLIQUES_EXECUTABLE = "cos_max_cliques_executable";
+    private static final String COS_EXECUTABLE = "cos_executable";
 
 
     public TevaParameters(InputStream input) throws IOException {
@@ -246,5 +243,21 @@ public class TevaParameters extends Properties {
 
     public void setMembershipWindowDelta(long membershipWindowDelta) {
         setProperty(MEMBERSHIP_WINDOW_DELTA,""+membershipWindowDelta);
+    }
+
+    public String getCosMaxCliquesExecutable() {
+        return getProperty(COS_MAX_CLIQUES_EXECUTABLE,"/usr/local/bin/maximal_cliques" );
+    }
+
+    public void setCosMaxCliquesExecutable(String s) {
+        setProperty(COS_MAX_CLIQUES_EXECUTABLE,s);
+    }
+
+     public String getCosExecutable() {
+        return getProperty(COS_EXECUTABLE,"/usr/local/bin/cos" );
+    }
+
+    public void setCosExecutable(String s) {
+        setProperty(COS_EXECUTABLE,s);
     }
 }

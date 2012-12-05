@@ -2,7 +2,6 @@ package edu.mit.cci.sna;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,7 +51,7 @@ public class CliqueDecorater implements CliqueDecoratedNetwork {
         return cliques;
     }
 
-    public void addCliques(List<Clique> cliques) {
+    public void addCliques(Collection<Clique> cliques) {
         this.cliques.addAll(cliques);
     }
 

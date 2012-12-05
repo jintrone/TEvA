@@ -4,11 +4,9 @@ import edu.mit.cci.sna.Clique;
 import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.Node;
-import edu.mit.cci.sna.impl.NodeImpl;
 import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import edu.mit.cci.teva.engine.CommunityFrame;
 import edu.mit.cci.teva.engine.CommunityModel;
-import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
 import edu.uci.ics.jung.algorithms.scoring.EigenvectorCentrality;
 import org.apache.commons.collections15.Transformer;
@@ -26,9 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: jintrone

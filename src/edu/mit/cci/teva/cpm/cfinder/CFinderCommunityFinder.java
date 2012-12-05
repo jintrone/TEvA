@@ -91,7 +91,7 @@ public class CFinderCommunityFinder implements CommunityFinder {
             try {
                 U.delete(networkFile);
                 log.debug("Attempting to create file at: "+networkFile.getAbsolutePath());
-                NetworkUtils.createNetworkFile(currentGraph, networkFile);
+                NetworkUtils.createNetworkFile(currentGraph, networkFile, true);
             } catch (IOException e) {
                 throw new CommunityFinderException("Error creating network file",e);
             }

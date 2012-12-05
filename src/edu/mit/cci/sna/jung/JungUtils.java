@@ -6,13 +6,11 @@ import edu.mit.cci.sna.impl.EdgeImpl;
 import edu.mit.cci.sna.impl.NodeImpl;
 
 import edu.uci.ics.jung.graph.AbstractGraph;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

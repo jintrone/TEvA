@@ -4,11 +4,9 @@ import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.Node;
 import edu.mit.cci.sna.impl.EdgeImpl;
-import edu.mit.cci.sna.impl.NodeImpl;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * User: jintrone
