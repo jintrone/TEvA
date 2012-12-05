@@ -1,6 +1,5 @@
 package edu.mit.cci.teva.engine;
 
-import com.sun.java.swing.plaf.windows.resources.windows;
 import edu.mit.cci.sna.Clique;
 import edu.mit.cci.sna.impl.EdgeImpl;
 import edu.mit.cci.sna.impl.NodeImpl;

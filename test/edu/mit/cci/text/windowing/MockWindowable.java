@@ -1,10 +1,5 @@
 package edu.mit.cci.text.windowing;
 
-import edu.mit.cci.text.preprocessing.TextTransformable;
-import sun.jvm.hotspot.debugger.windbg.WindbgDebugger;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;

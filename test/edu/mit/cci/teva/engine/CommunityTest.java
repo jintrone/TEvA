@@ -6,7 +6,6 @@ import edu.mit.cci.sna.impl.EdgeImpl;
 import edu.mit.cci.sna.impl.NodeImpl;
 import edu.mit.cci.teva.engine.Community;
 import edu.mit.cci.teva.engine.CommunityFrame;
-import edu.mit.cci.teva.engine.DummyCommunityFrameHolder;
 import edu.mit.cci.teva.util.TevaUtils;
 import junit.framework.Test;
 import junit.framework.TestSuite;

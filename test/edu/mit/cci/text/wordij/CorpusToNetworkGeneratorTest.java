@@ -12,7 +12,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import sun.util.resources.CalendarData;
 
 import java.util.ArrayList;
 import java.util.Calendar;

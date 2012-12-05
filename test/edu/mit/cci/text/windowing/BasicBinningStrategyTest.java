@@ -1,7 +1,5 @@
 package edu.mit.cci.text.windowing;
 
-import com.sun.xml.internal.rngom.digested.DAttributePattern;
-import edu.mit.cci.sna.Network;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.framework.TestCase;

@@ -1,8 +1,6 @@
 package edu.mit.cci.text.wordij;
 
-import com.sun.tools.corba.se.idl.StringGen;
 import edu.mit.cci.sna.Edge;
-import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.Node;
 import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import junit.framework.Test;
