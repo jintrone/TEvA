@@ -52,6 +52,7 @@
         <copy todir="${build.dir}">
             <fileset dir="${resources.dir}">
                 <include name="*.properties"/>
+                <include name="*.csv"/>
             </fileset>
         </copy>
     </target>
