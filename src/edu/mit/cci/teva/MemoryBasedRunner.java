@@ -50,6 +50,11 @@ public class MemoryBasedRunner {
     public NetworkProvider getNetworkProvider() throws IOException {
 
         NetworkProvider provider;
+        File f = new File(params.getWorkingDirectory());
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
         if (params.getSkipNetworkGeneration()) {
             WindowStrategy.Factory<Windowable> winFactory = factory.getTopicWindowingFactory();
             final int i = winFactory.getStrategy().getNumberWindows();
