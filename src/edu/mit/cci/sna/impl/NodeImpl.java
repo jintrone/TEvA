@@ -38,6 +38,7 @@ public class NodeImpl implements Node {
 
     }
 
+    //TODO this needs to be backed out of the api - id's should be invariant
     public void setLabel(String label) {
         this.label = label;
     }

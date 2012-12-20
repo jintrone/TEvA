@@ -64,7 +64,7 @@ public class EdgeImpl implements Edge {
     public boolean equals(Object o) {
         if (o instanceof Edge) {
             Edge e = (Edge) o;
-            return ((getEndpoints()[0].equals(e.getEndpoints()[0]) && e.getEndpoints()[1].equals(e.getEndpoints()[1])) ||
+            return ((getEndpoints()[0].equals(e.getEndpoints()[0]) && getEndpoints()[1].equals(e.getEndpoints()[1])) ||
                     (!e.isDirected() && !isDirected() && (getEndpoints()[1].equals(e.getEndpoints()[0]) && getEndpoints()[0].equals(e.getEndpoints()[1]))));
         }
         return false;

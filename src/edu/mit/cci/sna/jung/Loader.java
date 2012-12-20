@@ -34,6 +34,8 @@ public class Loader {
         graphreader.setEdgeWeightTransformer(new MapSettableTransformer<EdgeImpl, Number>(new HashMap<EdgeImpl, Number>()));
         graphreader.setVertexLabeller(new MapSettableTransformer<NodeImpl, String>(new HashMap<NodeImpl, String>()));
         graphreader.load(fileReader, graph);
+
+        //TODO this is a problem
         for (NodeImpl node : graph.getVertices()) {
             node.setLabel(graphreader.getVertexLabeller().transform(node));
         }
