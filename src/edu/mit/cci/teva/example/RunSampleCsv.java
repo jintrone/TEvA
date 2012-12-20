@@ -26,17 +26,17 @@ public class RunSampleCsv {
 
     public static void main(String args[]) throws IOException, ParseException, JAXBException, CommunityFinderException {
 
-
+        System.err.println(new File(".").getAbsoluteFile());
         Map<String,String> params = getParams(args);
         InputStream props = null;
         InputStream datafile = null;
-        if (!params.containsKey("p")) {
+        if (params.containsKey("p")) {
             props = new FileInputStream(params.get("p"));
         } else {
 
         }
         String corpus = "Demo";
-        if (!params.containsKey("f")) {
+        if (params.containsKey("f")) {
             datafile = new FileInputStream(params.get("f"));
             corpus = params.get("f");
         } else {
@@ -57,17 +57,19 @@ public class RunSampleCsv {
     public static Map<String,String> getParams(String[] args) {
         Map<String,String> result = new HashMap<String,String>();
 
+
         for (String s:args) {
 
             if (s.startsWith("-p")) {
                 result.put("p",s.substring(2));
             } else if (s.startsWith("-f")) {
                 result.put("f",s.substring(2));
-            } else if (s.startsWith("-")) {
-                System.out.println("Unknown option: "+s);
+
             } else if (s.startsWith("-help") || "-?".equals(s)) {
                 usage();
                 System.exit(1);
+            } else if (s.startsWith("-")) {
+                System.out.println("Unknown option: "+s);
             }
 
         }

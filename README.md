@@ -12,9 +12,21 @@ This software framework is intended as a reusable, extensible library.  It curre
 
 TEvA is licensed under the MIT License.  Use it however you want.  Citations are always appreciated (see [4]). :-)
 
-RUNNING
-*******
-There is a sample application that can be run using the class edu.mit.cci.teva.example.RunSampleCsv.  As the name implies, it builds an adapter on-top of a CSV file (see edu.mit.cci.teva.adapters.csv.CsvBasedConversation) which is available in the resources/sample directory.  This code is provided as an example only, and I recommend using a database for persistence rather than a CSV. 
+USE
+***
+The algorithm requires an instance of edu.mit.cci.teva.engine.TevaParameters properties file and an instance of a Conversation (edu.mit.cci.teva.model.Conversation).
+
+TevaParameters can be loaded from a properties file, (see ./resources/teva.default.properties). Note that TevaParameters refers to a stopword list and replacement list; default versions of these are available in the ./resources directory, but these should *not* be used for real analyses.
+
+Clients must provide classes that implement Conversation and related entities.
+
+There is a sample application that can be run using the class edu.mit.cci.teva.example.RunSampleCsv.  The application builds an adapter on-top of a CSV file (see edu.mit.cci.teva.adapters.csv.CsvBasedConversation), and runs the algorithm on this adapter.
+
+Without parameters, the application will run using the sample corpus included with the distribution (./resource/sampledata/MM15.csv). The application also accepts parameters, as follows, which will allow you to use sample data of your choice:
+
+       RunSampleCsv [-p<properties_file>] [-f<input_csv>]
+
+The sample application is provided as an example only, and I recommend using a database for persistence rather than a CSV.
 
 
 REFERENCES

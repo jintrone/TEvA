@@ -74,7 +74,7 @@ public class DefaultTevaFactory implements TevaFactory {
         }
         if (params.getStopwordList() != null && !params.getStopwordList().isEmpty()) {
             if (params.getReplacementDictionary().startsWith("/") || params.getReplacementDictionary().startsWith(".")) {
-                mungers.add(DictionaryMunger.read(new FileInputStream(params.getStopwordList())));
+                mungers.add(StopwordMunger.read(new FileInputStream(params.getStopwordList())));
                 log.info("Loaded stopword list from file: "+params.getStopwordList());
             } else {
                 mungers.add(StopwordMunger.read(getClass().getResourceAsStream(("/" + params.getStopwordList()))));
