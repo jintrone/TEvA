@@ -4,7 +4,9 @@ import edu.mit.cci.sna.Clique;
 import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.Node;
+import edu.mit.cci.sna.impl.NodeImpl;
 import edu.mit.cci.sna.jung.UndirectedJungNetwork;
+import edu.mit.cci.teva.engine.Community;
 import edu.mit.cci.teva.engine.CommunityFrame;
 import edu.mit.cci.teva.engine.CommunityModel;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
@@ -24,7 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: jintrone
@@ -129,6 +135,109 @@ public class TevaUtils {
         output.close();
 
     }
+
+    /**
+     * Creates a graph of all topics / time windows, with each step connected, and each of the link types between topics included
+     *
+     * @param jaxb
+     * @param spawns
+     * @param consumes
+     * @param informs
+     * @return
+    public static UndirectedJungNetwork createCommunityGraph(CommunityModel jaxb, boolean spawns, boolean consumes, boolean informs) {
+        Map<String, List<Node>> nodemap = new HashMap<String, List<Node>>();
+        UndirectedJungNetwork result = new UndirectedJungNetwork();
+        for (Community cs : jaxb.getCommunities()) {
+            List<Node> nodes = new ArrayList<Node>();
+            nodemap.put(cs.getId(), nodes);
+            int maxposts = jaxb.getMaxPostCount();
+            for (int i = 0; i < jaxb.getWindows().length; i++) {
+                CommunityFrame s = cs.getCommunityAtBin(i);
+                if (s == null) continue;
+                else {
+                    NodeImpl n = new NodeImpl("C" + cs.getId());
+                    n.setProperty("Size", s.getNodes().size());
+                    n.setProperty("Age", i);
+                    n.setProperty("CommunityId", cs.getId());
+                    //TODO add community intensity
+
+                    //n.setProperty("Intensity", (int) (300.0f * (s.getStats().getIntegration() * s.getStats().getThreadFocus() * (s.getStats().getNumPosts() / (float) maxposts))));
+
+                    nodes.add(n);
+                    result.addVertex(n);
+                }
+            }
+        }
+
+        for (Community cs : jaxb.getCommunities()) {
+            Set<CommunityModel.Connection> destinations = new HashSet<CommunityModel.Connection>();
+            if (consumes) {
+                for (Map.Entry<Integer,Set<CommunityModel.Connection>> ent:jaxb.consumers.entrySet()) {
+                    for (CommunityModel.Connection con:ent.getValue()) {
+                    Node src = null;
+                    Node dest = null;
+                    for (Node ns: nodemap.get(cs.getId())) {
+                        if (ns.getProperty("Age").equals(ent.getKey()-1)) {
+                            src = ns;
+                        }   break;
+                    }
+                    for (Node ns:nodemap.get(con.target.getId())) {
+                        if ()
+                    }
+                    }
+                }
+            };
+            if (spawns) destinations.addAll(cs.getSpawns());
+
+
+            for (DestinationJaxb d : destinations) {
+                DefaultJungNode src = null;
+                DefaultJungNode dest = null;
+                for (DefaultJungNode ns : nodemap.get(cs.getCommunityId())) {
+                    if (ns.getAttribute("Age").equals(d.getWindow() - 1)) {
+                        src = ns;
+                        break;
+                    }
+                }
+
+                for (DefaultJungNode nd : nodemap.get(d.getCommunityId())) {
+                    if (nd.getAttribute("Age").equals(d.getWindow())) {
+                        dest = nd;
+                        break;
+                    }
+                }
+                result.addEdge(src, dest, 1.0f);
+            }
+
+            if (informs) {
+                for (DestinationJaxb d : cs.getInforms()) {
+                    int idx = nodemap.get(cs.getCommunityId()).size() - 1;
+                    DefaultJungNode src = nodemap.get(cs.getCommunityId()).get(idx);
+                    DefaultJungNode dest = null;
+                    for (DefaultJungNode nd : nodemap.get(d.getCommunityId())) {
+                        if (nd.getAttribute("Age").equals(d.getWindow())) {
+                            dest = nd;
+                            break;
+                        }
+                    }
+                    result.addEdge(src, dest, 1.0f);
+                }
+            }
+
+
+        }
+
+        for (List<DefaultJungNode> nodes : nodemap.values()) {
+            for (int i = 1; i < nodes.size(); i++) {
+                result.addEdge(nodes.get(i - 1), nodes.get(i), 1.0f);
+            }
+        }
+        return result;
+
+
+    }
+     */
+
 
 
 }

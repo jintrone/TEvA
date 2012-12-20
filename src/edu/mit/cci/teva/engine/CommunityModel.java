@@ -76,6 +76,19 @@ public class CommunityModel {
         conn.add(new Connection(from,to,weight));
     }
 
+    public int getMaxPostCount() {
+           int maxposts = 0;
+           for (Community c : communities) {
+               for (ConversationChunk chunk:c.getAssignments()) {
+                   if (chunk.messages.size() > maxposts) maxposts = chunk.messages.size();
+               }
+
+           }
+           return maxposts;
+
+       }
+
+
     public Set<Connection> getConnection(int bin, ConnectionType  type) {
         return map(type)!=null?map(type).get(bin): Collections.<Connection>emptySet();
     }

@@ -43,12 +43,17 @@ public class TevaParameters extends Properties {
 
     public TevaParameters(InputStream input) throws IOException {
         super();
-        this.load(input);
+        if (input == null) {
+            this.load(getClass().getResourceAsStream("/teva.default.properties"));
+
+        }   else {
+            this.load(input);
+        }
     }
 
     public TevaParameters() throws IOException {
         super();
-        this.load(getClass().getResourceAsStream("/teva.properties"));
+        this.load(getClass().getResourceAsStream("/teva.default.properties"));
 
     }
 

@@ -1,5 +1,7 @@
 package edu.mit.cci.teva.analysis;
 
+import edu.mit.cci.sna.jung.UndirectedJungNetwork;
+import edu.mit.cci.teva.engine.CommunityModel;
 import edu.mit.cci.teva.util.TevaUtils;
 import edu.mit.cci.util.ConsoleBase;
 import edu.mit.cci.util.ConsoleDocumentation;
@@ -26,7 +28,7 @@ public class AnalysisConsole extends ConsoleBase {
 
 
     public AnalysisConsole() throws IOException {
-          props = new Properties();
+        props = new Properties();
         if (!pfile.exists()) {
             pfile.createNewFile();
             updateProperties(new File("."));
@@ -55,8 +57,8 @@ public class AnalysisConsole extends ConsoleBase {
     }
 
     public File getAnyFile(String message) {
-        File f = U.getAnyFile(message,props.getProperty("last_file"));
-        if (f!=null) updateProperties(f);
+        File f = U.getAnyFile(message, props.getProperty("last_file"));
+        if (f != null) updateProperties(f);
         return f;
     }
 
@@ -91,6 +93,34 @@ public class AnalysisConsole extends ConsoleBase {
         new DumpTopicsToCsvLong(TevaUtils.getCommunityModelFromFile(f), new FileOutputStream(name)).write();
 
     }
+   /**
+    @ConsoleDocumentation(value = "Create a static graphml representation of a community evolution file")
+    public void runCreateGraphMLCommunityGraph() throws JAXBException, IOException {
+        CommunityModel model = TevaUtils.getCommunityModelFromFile(U.getAnyFile("Select community file", "."));
 
+
+        boolean informs = false;
+        boolean spawns = false;
+        System.out.print("Include informs links (y/n)? ");
+        String response = s.nextLine();
+        if ("y".equals(response.trim())) {
+            informs = true;
+        }
+        System.out.print("Include spawns links (y/n)? ");
+        response = s.nextLine();
+        if ("y".equals(response.trim())) {
+            spawns = true;
+        }
+        createCommunityGraphMLGraph(model, informs, spawns);
+    }
+    **/
+   /**
+    private void createCommunityGraphMLGraph(CommunityModel model, boolean informs, boolean spawns) throws JAXBException, IOException {
+        UndirectedJungNetwork graph = Utils.createCommunityGraph(jaxb, spawns, true, informs);
+        Utils.addDrainageScoresForCommunityGraph(graph);
+        String filename = jaxb.getCorpusName() + ".static.graphml";
+        Utils.writeGraphML(graph, Utils.mapify("Size", 0, "Intensity", 0, "Age", 0, "CommunityId", 0, "Centrality", 0), filename);
+    }
+     **/
 
 }

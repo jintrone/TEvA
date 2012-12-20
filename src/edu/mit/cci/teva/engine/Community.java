@@ -167,4 +167,7 @@ public class Community {
 //    }
 
 
+    public List<ConversationChunk> getAssignments() {
+        return assignments;
+    }
 }

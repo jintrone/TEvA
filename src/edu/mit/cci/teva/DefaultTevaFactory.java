@@ -22,7 +22,9 @@ import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.LinearWeightNetworkGenerator;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
+import org.apache.log4j.Logger;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class DefaultTevaFactory implements TevaFactory {
 
     private TevaParameters params;
     private Conversation conversation;
+    private static Logger log = Logger.getLogger(DefaultTevaFactory.class);
 
     public DefaultTevaFactory(TevaParameters params, Conversation conversation) {
         this.params = params;
@@ -58,16 +61,31 @@ public class DefaultTevaFactory implements TevaFactory {
         return data;
     }
 
-    public Tokenizer<String> getTokenizer() throws IOException {
-        List<Munger> mungers = new ArrayList<Munger>();
-        if (params.getReplacementDictionary() != null) {
-            mungers.add(DictionaryMunger.read(getClass().getResourceAsStream("/" + params.getReplacementDictionary())));
+    public Munger[] getMungers() throws IOException {
+         List<Munger> mungers = new ArrayList<Munger>();
+        if (params.getReplacementDictionary() != null && !params.getReplacementDictionary().isEmpty()) {
+            if (params.getReplacementDictionary().startsWith("/") || params.getReplacementDictionary().startsWith(".")) {
+                mungers.add(DictionaryMunger.read(new FileInputStream(params.getReplacementDictionary())));
+                log.info("Loaded replacement list from file: "+params.getReplacementDictionary());
+            } else {
+                mungers.add(DictionaryMunger.read(getClass().getResourceAsStream("/" + params.getReplacementDictionary())));
+                log.info("Loaded replacement list from resource: "+params.getReplacementDictionary());
+            }
         }
-        if (params.getStopwordList() != null) {
-            mungers.add(StopwordMunger.read(getClass().getResourceAsStream(("/" + params.getStopwordList()))));
+        if (params.getStopwordList() != null && !params.getStopwordList().isEmpty()) {
+            if (params.getReplacementDictionary().startsWith("/") || params.getReplacementDictionary().startsWith(".")) {
+                mungers.add(DictionaryMunger.read(new FileInputStream(params.getStopwordList())));
+                log.info("Loaded stopword list from file: "+params.getStopwordList());
+            } else {
+                mungers.add(StopwordMunger.read(getClass().getResourceAsStream(("/" + params.getStopwordList()))));
+                log.info("Loaded stopword list from resource: "+params.getStopwordList());
+            }
         }
+        return mungers.toArray(new Munger[mungers.size()]);
+    }
 
-        return new AlphaNumericTokenizer(mungers.toArray(new Munger[0]));
+    public Tokenizer<String> getTokenizer() throws IOException {
+        return new AlphaNumericTokenizer(getMungers());
     }
 
     public MergeStrategy getMerger() {

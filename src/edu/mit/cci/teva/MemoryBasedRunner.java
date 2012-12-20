@@ -30,12 +30,12 @@ public class MemoryBasedRunner {
     TevaParameters params;
     Conversation conversation;
     private WindowStrategy.Factory<Windowable> windowStrategyFactory;
-    private DefaultTevaFactory factory;
+    private TevaFactory factory;
 
 
     public MemoryBasedRunner(Conversation c) throws IOException, CommunityFinderException, JAXBException {
         this.conversation = c;
-        this.params = new TevaParameters(this.getClass().getResourceAsStream("/teva.properties"));
+        this.params = new TevaParameters();
         this.factory = new DefaultTevaFactory(params,conversation);
         process();
     }
@@ -46,6 +46,24 @@ public class MemoryBasedRunner {
         this.factory = new DefaultTevaFactory(params,conversation);
         process();
     }
+
+     public MemoryBasedRunner(Conversation c, InputStream parameters, TevaFactory factory) throws IOException, CommunityFinderException, JAXBException {
+        this.conversation = c;
+        this.params = new TevaParameters(parameters);
+        this.factory =factory;
+        process();
+    }
+
+    public MemoryBasedRunner(Conversation c, TevaParameters parameters, TevaFactory factory) throws IOException, CommunityFinderException, JAXBException {
+        this.conversation = c;
+        this.params = parameters;
+        this.factory =factory;
+        process();
+    }
+
+
+
+
 
     public NetworkProvider getNetworkProvider() throws IOException {
 
