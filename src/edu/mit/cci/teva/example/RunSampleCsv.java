@@ -1,6 +1,5 @@
 package edu.mit.cci.teva.example;
 
-import com.sun.xml.internal.messaging.saaj.util.TeeInputStream;
 import edu.mit.cci.adapters.csv.CsvBasedConversation;
 import edu.mit.cci.teva.DefaultTevaFactory;
 import edu.mit.cci.teva.MemoryBasedRunner;
@@ -37,8 +36,9 @@ public class RunSampleCsv {
         }
         String corpus = "Demo";
         if (params.containsKey("f")) {
-            datafile = new FileInputStream(params.get("f"));
-            corpus = params.get("f");
+            File f = new File(params.get("f"));
+            datafile = new FileInputStream(f);
+            corpus = params.get(f.getName());
         } else {
             datafile = ClassLoader.getSystemClassLoader().getResourceAsStream("/sampledata/MM15.csv");
         }
