@@ -24,5 +24,5 @@ import java.util.List;
  */
 public interface TextToNetworkGenerator {
 
-    public Network calculateWeights(List<String> tokens);
+    public Network calculateWeights(List<String> precedingTokens, List<String> targettokens);
 }

@@ -29,8 +29,8 @@ public class SingleThreadBinningStrategy implements BinningStrategy<Windowable> 
     }
 
 
-    public List<List<Windowable>> getDataAtWindow(int window) {
-        return Collections.singletonList(windowStrategy.getWindow(window));
+    public List<Bin<Windowable>> getDataAtWindow(int window) {
+         return Collections.singletonList((Bin<Windowable>)new BasicBin<Windowable>(windowStrategy.getWindow(window)));
     }
 
     public int getNumBins() {

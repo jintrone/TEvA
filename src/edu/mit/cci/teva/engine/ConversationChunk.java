@@ -27,7 +27,7 @@ public class ConversationChunk {
     @XmlAttribute
     public int window;
 
-    private ConversationChunk() {}
+    public ConversationChunk() {}
 
     public ConversationChunk(List<Windowable> messages, int window, float coverage, float similarity) {
         this.coverage = coverage;

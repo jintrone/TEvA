@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: jintrone
@@ -16,8 +18,8 @@ import java.util.List;
 public class EvolutionEngine {
 
 
-    private static Logger logProcess = Logger.getLogger(EvolutionEngine.class);
     private static Logger log = Logger.getLogger(EvolutionEngine.class);
+    private static Logger logProcess = log;
 
 
     EvolutionStepStrategy stepStrategy;
@@ -25,7 +27,6 @@ public class EvolutionEngine {
 
     private NetworkProvider provider;
     private CommunityFinder finder;
-
 
 
     private CommunityModel model;
@@ -42,7 +43,7 @@ public class EvolutionEngine {
     }
 
 
-     public CommunityModel getCommunityModel() {
+    public CommunityModel getCommunityModel() {
         return model;
     }
 
@@ -53,7 +54,6 @@ public class EvolutionEngine {
      * of merging slices and mapping through cliques in the merged layer
      *
      * @throws CommunityFinderException
-     *
      * @throws java.io.IOException
      */
     public void process() throws CommunityFinderException, IOException {
@@ -63,7 +63,13 @@ public class EvolutionEngine {
         for (int i = 0; i < provider.getNumberWindows(); i++) {
 
             Network currentGraph = provider.getNetworkAt(i);
+            log.info("Removing edges weight < " + params.getMinimumLinkWeight() + " from " + currentGraph.getEdges().size());
             NetworkUtils.filterEdges(currentGraph, params.getMinimumLinkWeight());
+            log.info(currentGraph.getEdges().size() + " edges remain");
+            if (currentGraph.getEdges().size() == 0) {
+                log.info("Skipping network at step " + i);
+                continue;
+            }
             if (!step(i, lastGraph, currentGraph)) {
                 break;
             }
@@ -78,18 +84,24 @@ public class EvolutionEngine {
 
     protected List<CommunityFrame> getInputFrames() {
         List<CommunityFrame> result = new ArrayList<CommunityFrame>();
+        Set<String> communities = new HashSet<String>();
         for (Community c : model.getCommunities()) {
-                if (c.isExpired()) continue;
-                CommunityFrame data = c.getCommunityAtBin(c.getMaxBin());
-                result.add(data);
 
+            if (c.isExpired()) continue;
+            if (communities.contains(c.getId())) {
+                log.warn("Adding frame that already points to community: " + c.getId());
             }
+            communities.add(c.getId());
+            CommunityFrame data = c.getCommunityAtBin(c.getMaxBin());
+            result.add(data);
+
+        }
         return result;
     }
 
     private boolean step(int i, Network lastGraph, Network currentGraph) throws CommunityFinderException {
 
-        List<CommunityFrame> to = finder.findCommunities(currentGraph, getCliqueSizeAtWindow(i), i,params.getFilenameIdentifier());
+        List<CommunityFrame> to = finder.findCommunities(currentGraph, getCliqueSizeAtWindow(i), i, params.getFilenameIdentifier());
         if (to == null) return false;
 
         if (lastGraph == null) {
@@ -99,14 +111,14 @@ public class EvolutionEngine {
                 Community c = Community.create();
                 c.addFrame(a);
                 model.addCommunity(c);
-                logProcess.info("CREATE INIT COMMUNITY " + c + " -> " + a.getNodes());
+                log.info("CREATE INIT COMMUNITY " + c + " -> " + a.getNodes());
             }
 
         } else {
 
 
-            List<CommunityFrame> from =  getInputFrames();
-            List<Network> merged = mergeStrategy.process(lastGraph,from,currentGraph,to);
+            List<CommunityFrame> from = getInputFrames();
+            List<Network> merged = mergeStrategy.process(lastGraph, from, currentGraph, to, i);
             stepStrategy.processStep(i, from, merged, to);
 
         }

@@ -47,7 +47,7 @@ public class ParameterAdapter extends XmlAdapter<ParameterAdapter,TevaParameters
 
     @XmlAttribute
     public long membershipWindowDelta = -1;
-
+    @XmlAttribute
     public String workingDirectory = "";
 
 

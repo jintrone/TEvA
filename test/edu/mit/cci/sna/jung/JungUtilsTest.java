@@ -41,8 +41,8 @@ public class JungUtilsTest extends TestCase {
         String[] sample1 = new String[]{"1","2","3","4","5","3","4","5","6","7"};
         String[] sample2 = new String[]{"3","4","5","6","7","5","6","7","8","9"};
         LinearWeightNetworkGenerator generator = new LinearWeightNetworkGenerator(3,2);
-        Network one = generator.calculateWeights(Arrays.asList(sample1));
-        Network two = generator.calculateWeights(Arrays.asList(sample2));
+        Network one = generator.calculateWeights(null,Arrays.asList(sample1));
+        Network two = generator.calculateWeights(null,Arrays.asList(sample2));
 
         JungUtils.merge((Graph< Node,Edge>)one,(Graph< Node,Edge>)two, JungUtils.MergePolicy.ADD_MAX_1);
         //weight 1

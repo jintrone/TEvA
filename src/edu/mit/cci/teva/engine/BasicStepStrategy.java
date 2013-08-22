@@ -69,7 +69,7 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
                 }
             }
 
-            log.debug("Process from cliques");
+
             if (tocliques != null) {
                 for (CommunityFrame info : tocliques) {
 
@@ -109,6 +109,9 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
         }
         if (!accounting.containsAll(tocliques)) {
+            Set<CommunityFrame> test = new HashSet<CommunityFrame>(accounting);
+            test.removeAll(tocliques);
+
             throw new RuntimeException("To cliques should all be accounted for, there is a problem");
         }
 
@@ -150,7 +153,11 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
                 }
 
                 //placement of this line will determine the policy regarding progeny
+                int size = accounting.size();
                 accounting.remove(pair.getPair()[0]);
+                if (accounting.size() == size) {
+                    log.warn("Did not remove frame from accounting: "+pair.getPair()[0]);
+                }
 
                 //pair.getPair()[0].getCommunity().setBin(i, pair.getPair()[0]);
                 //logProcess.debug(i + ". Set data:" + pair.getPair()[0].getCommunity().getName() + pair.getPair()[0].nodes);
@@ -160,22 +167,29 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
                     pair.getPair()[0].getCommunity().addFrame(pair.getPair()[1]);
                     log.debug(i + ". Evolve community: " + pair.getPair()[0].getCommunity().getName() + ":" + pair.getPair()[1]);
                     //  STOPPED
+                    size = accounting.size();
+                    accounting.remove(pair.getPair()[1]);
+                    if (size == accounting.size()) {
+                        log.warn("Accounting did not remove a frame!");
+                    }
 
                 } else {
                     //have already encountered the second clique, as part of another community, so expire the first of the pair
                     //logProcess.debug(i + ". Already assigned to clique:" + pair.getPair()[1]);
                     log.debug(i + ". Expire " + pair.getPair()[0]);
                     log.debug(i + ". SET PROGENITOR of " + pair.getPair()[1].getCommunity() + " to " + pair.getPair()[0].getCommunity() + " at " + i);
+                    if (pair.getPair()[1].getCommunity().getId().equals(pair.getPair()[0].getCommunity().getId())) {
+                        log.warn("Community shouldn't consume itself!");
+                    }
                     model.addConnection(i, NetworkUtils.coverage(pair.getPair()[0], pair.getPair()[1]), CommunityModel.ConnectionType.CONSUMES, pair.getPair()[0].getCommunity(), pair.getPair()[1].getCommunity());
 
 
                     if (params.expireConsumedCommunities()) {
-                        //logProcess.info(i + "Expire:" + pair.getPair()[0].getCommunity() + " becomes " + pair.getPair()[1]);
+                        log.debug(i + "Expire:" + pair.getPair()[0].getCommunity() + " becomes " + pair.getPair()[1]);
                         pair.getPair()[0].getCommunity().expire();
                     }
 
                 }
-                accounting.remove(pair.getPair()[1]);
 
 
             }
@@ -231,7 +245,7 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
 
         TevaParameters param = new TevaParameters();
         param.setProperty(TevaParameters.WORKING_DIRECTORY, "../REASONTEVA/work");
-        BasicStepStrategy step = new BasicStepStrategy(new CommunityModel(param,new Date[][]{},"TestCorpus"),param);
+        BasicStepStrategy step = new BasicStepStrategy(new CommunityModel(param, new Date[][]{}, "TestCorpus"), param);
 
         CFinderCommunityFinder finder = new CFinderCommunityFinder(false, false, new TevaParameters());
         File one = new File("../REASONTEVA/work/CFinderNetwork.TEvA.0.net");
@@ -244,15 +258,12 @@ public class BasicStepStrategy implements EvolutionStepStrategy {
         List<CommunityFrame> frames2 = finder.findCommunities(two, 4, 1);
 
         FastMergeStrategy strategy = new FastMergeStrategy(4);
-        List<Network> result = strategy.process(none, frames1, ntwo, frames2);
+        List<Network> result = strategy.process(none, frames1, ntwo, frames2, 0);
         for (Network n : result) {
             log.debug("Network: " + n.getNodes());
         }
 
-        step.processStep(0,frames1,result,frames2);
-
-
-
+        step.processStep(0, frames1, result, frames2);
 
 
     }

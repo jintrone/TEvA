@@ -28,13 +28,13 @@ public class PrecomputedTimeWindowStrategyTest extends TestCase {
 
     /**
      *
-     * Method: analyze()
+     * Method: analyzeToMemory()
      *
      */
     public void testSizedWindows() throws Exception {
         List<Windowable> w = MockWindowable.getWindows(100,20,30,70,140,140);
         Date[][] windows = WindowingUtils.analyzeBySize(w, 120, 50);
-        PrecomputedTimeWindowStrategy<Windowable> wstrat = new PrecomputedTimeWindowStrategy<Windowable>(windows);
+        PrecomputedTimeWindowStrategy wstrat = new PrecomputedTimeWindowStrategy(windows);
         int[][] expect = new int[][] {
                 {0,1},  //120
                 {1,2,3}, //120

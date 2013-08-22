@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Basic implementation of a binning strategy.  Presumes N threads, evolving in parallel.  Ignores reply structure if it exists.
+ *
  * User: jintrone
  * Date: 5/23/11
  * Time: 5:33 PM
@@ -48,10 +50,10 @@ public class BasicBinningStrategy<T extends Windowable> implements BinningStrate
     }
 
 
-    public List<List<Windowable>> getDataAtWindow(int window) {
-        List<List<Windowable>> result = new ArrayList<List<Windowable>>();
+    public List<Bin<Windowable>> getDataAtWindow(int window) {
+        List<Bin<Windowable>> result = new ArrayList<Bin<Windowable>>();
         for (WindowStrategy<Windowable> strategy:binmodel) {
-            result.add(strategy.getWindow(window));
+            result.add(new BasicBin<Windowable>(strategy.getWindow(window)));
         }
         return result;
     }

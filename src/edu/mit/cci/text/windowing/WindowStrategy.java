@@ -21,7 +21,9 @@ public interface WindowStrategy<T> {
      * Sets the underlying data stream to be indexed.  Expects data to be sorted.
      * @param data
      */
-    public void setData(List<T> data);
+    public void setData(List<? extends T> data);
+
+
 
     public static interface Factory<T> {
 

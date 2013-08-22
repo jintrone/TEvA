@@ -22,7 +22,7 @@ public class ConversationImpl implements Conversation {
         this.name = name;
     }
 
-    public ConversationImpl(String name, List<DiscussionThread> threads) {
+    public ConversationImpl(String name, List<? extends DiscussionThread> threads) {
         this.name = name;
         for (DiscussionThread t:threads) {
           addThread(t);

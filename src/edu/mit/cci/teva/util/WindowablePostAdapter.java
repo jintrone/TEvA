@@ -41,4 +41,9 @@ public class WindowablePostAdapter implements Windowable {
     public Post getPost() {
         return post;
     }
+
+    public String toString() {
+        return post.toString();
+
+    }
 }

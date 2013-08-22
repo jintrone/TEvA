@@ -3,6 +3,7 @@ package edu.mit.cci.teva.analysis;
 import edu.mit.cci.sna.Node;
 import edu.mit.cci.teva.engine.Community;
 import edu.mit.cci.teva.engine.CommunityModel;
+import edu.mit.cci.teva.util.Stringer;
 import edu.mit.cci.teva.util.TevaUtils;
 
 import java.io.OutputStream;
@@ -84,10 +85,6 @@ public class DumpTopicsToCsv {
             sep = ",";
         }
         return builder.toString();
-    }
-
-    public static interface Stringer<T> {
-        public String stringify(T object);
     }
 
 

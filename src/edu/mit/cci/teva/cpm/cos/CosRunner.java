@@ -27,6 +27,7 @@ public class CosRunner {
     private String mCliqueExec;
     private String cosExec;
     private String outputBaseDir;
+    private String cosParams = "";
 
     public CosRunner(String pathToMaxCliquesExecutable, String pathToCosExecutable, String outputBaseDir) {
         this.mCliqueExec = pathToMaxCliquesExecutable;
@@ -34,9 +35,11 @@ public class CosRunner {
         this.outputBaseDir = outputBaseDir;
     }
 
-    public File getOutputDir(File inputfile) {
-        return new File(inputfile.getAbsolutePath() + "_files");
-
+    public CosRunner(String pathToMaxCliquesExecutable, String pathToCosExecutable, String cosParams, String outputBaseDir) {
+        this.mCliqueExec = pathToMaxCliquesExecutable;
+        this.cosExec = pathToCosExecutable;
+        this.outputBaseDir = outputBaseDir;
+        this.cosParams = cosParams;
     }
 
     public String buildMCliqueCommandLine(File inputFile) {
@@ -45,59 +48,56 @@ public class CosRunner {
     }
 
     public String buildCosCommandLine(File inputFile) {
-        return String.format("%s %s", cosExec, inputFile.getAbsolutePath());
+        return String.format("%s %s %s", cosExec, cosParams, inputFile.getAbsolutePath());
 
     }
 
 
     public boolean process(File inputFile, boolean overwrite) throws IOException, InterruptedException, CommunityFinderException {
-        File outputDir = getOutputDir(inputFile);
-        if (outputDir.exists()) {
-            if (overwrite) {
-                U.delete(getOutputDir(inputFile));
-                getOutputDir(inputFile).mkdirs();
-            } else {
-                log.warn("Output directory exists, skipping community generation");
-                return false;
+        File outputDir = inputFile.getParentFile();
+
+        if (!new File(inputFile.getAbsolutePath() + ".mcliques").exists() || overwrite) {
+            if (!generateMaxCliques(inputFile)) throw new CommunityFinderException("Problem generating max cliques");
+
+            // move files
+
+            boolean b = U.move(new File(inputFile.getName() + ".map"), outputDir);
+            b &= U.move(new File(inputFile.getName() + ".mcliques"), outputDir);
+            if (!b) {
+                log.error("Error moving files");
+                throw new CommunityFinderException("Could not move files to output dir: " + outputDir.getAbsolutePath());
             }
-        } else {
-            getOutputDir(inputFile).mkdirs();
         }
-        if (!generateMaxCliques(inputFile)) throw new CommunityFinderException("Problem generating max cliques");
-
-        // move files
-        boolean b = U.move(inputFile, outputDir);
-        b &= U.move(new File(inputFile.getAbsolutePath() + ".map"), outputDir);
-        b &= U.move(new File(inputFile.getAbsolutePath() + ".mcliques"), outputDir);
-        if (!b) {
-            log.error("Error moving files");
-            throw new CommunityFinderException("Could not move files to output dir");
-        }
-
-        if (!generateCommunityAnalysis(inputFile,outputDir)) throw new CommunityFinderException("Problem extracting communities");
+        if (!new File(outputDir, "k_num_communities.txt").exists() || overwrite) {
+            if (!generateCommunityAnalysis(inputFile, outputDir))
+                throw new CommunityFinderException("Problem extracting communities");
 
 
-        File[] files = new File(".").listFiles(new FilenameFilter() {
-            public boolean accept(File file, String s) {
-                return s.endsWith("_communities.txt");
+            File[] files = new File(".").listFiles(new FilenameFilter() {
+                public boolean accept(File file, String s) {
+                    return s.endsWith("_communities.txt");
+                }
+            });
+            boolean b = true;
+            for (File f : files) {
+                b &= U.move(f, outputDir);
             }
-        });
-        for (File f:files) {
-            b&= U.move(f,outputDir);
-        }
-        if (!b) {
-            throw new CommunityFinderException("Error moving community files");
+            if (!b) {
+                throw new CommunityFinderException("Error moving community files");
+            }
         }
         return true;
-
 
 
     }
 
     private boolean generateMaxCliques(File inputFile) throws IOException, InterruptedException {
-        log.info("Generating maximal cliques for " + inputFile.getName());
+        log.info("Generating maximal cliques for " + inputFile.getAbsolutePath());
         long current = System.currentTimeMillis();
-        Process p = Runtime.getRuntime().exec(buildMCliqueCommandLine(inputFile));
+        String cmd = buildMCliqueCommandLine(inputFile);
+        log.info("Run " + cmd);
+        Process p = Runtime.getRuntime().exec(cmd);
+
         StreamGobbler errorGobbler = new
                 StreamGobbler(p.getErrorStream(), "ERROR");
 
@@ -131,8 +131,10 @@ public class CosRunner {
         log.info("Generating communities for " + inputFile.getName());
         long current = System.currentTimeMillis();
 
-        File mcliques = new File(outputdir,inputFile.getName()+".mcliques");
-        Process p = Runtime.getRuntime().exec(buildCosCommandLine(mcliques));
+        File mcliques = new File(outputdir, inputFile.getName() + ".mcliques");
+        String cmd = buildCosCommandLine(mcliques);
+        log.info("Execute: " + cmd);
+        Process p = Runtime.getRuntime().exec(cmd);
         StreamGobbler errorGobbler = new
                 StreamGobbler(p.getErrorStream(), "ERROR");
 

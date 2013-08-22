@@ -40,7 +40,7 @@ public class LinearWeightNetworkGeneratorTest extends TestCase {
     public void testCalculateWeights() throws Exception {
         String[] input = new String[]{"1","2","3","4","5","3","6","2"};
         LinearWeightNetworkGenerator generator = new LinearWeightNetworkGenerator(3,2);
-        UndirectedJungNetwork n = (UndirectedJungNetwork)generator.calculateWeights(Arrays.asList(input));
+        UndirectedJungNetwork n = (UndirectedJungNetwork)generator.calculateWeights(null,Arrays.asList(input));
         Collection<Edge> e = n.getEdges();
         //edges weight = 1
         String[][] edges_1 = new String[][] {

@@ -1,6 +1,7 @@
 package edu.mit.cci.adapters.csv;
 
-import com.csvreader.CsvReader;
+import com.Ostermiller.util.ExcelCSVParser;
+import com.csvreader.*;
 import com.sun.tools.corba.se.idl.StringGen;
 import edu.mit.cci.teva.model.ConversationImpl;
 import edu.mit.cci.teva.model.DiscussionThread;
@@ -37,13 +38,15 @@ public class CsvBasedConversation extends ConversationImpl {
 
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private static String[] cols = {"id","replyTo","created","author","text"};
+
     public static enum Column {
-        ID("id"), REPLY("replyTo"), CREATED("created"), AUTHOR("author"), TEXT("text");
+        ID(0), REPLY(1), CREATED(2), AUTHOR(3), TEXT(4);
 
         private String colname;
 
-        Column(String colname) {
-            this.colname = colname;
+        Column(int i) {
+            this.colname = cols[i];
         }
 
         public String getColumnName() {
@@ -51,9 +54,13 @@ public class CsvBasedConversation extends ConversationImpl {
         }
     }
 
-
     public CsvBasedConversation(String corpusname, InputStream inputFile) throws IOException, ParseException {
+        this(cols, corpusname, inputFile);
+    }
+
+    public CsvBasedConversation(String[] cols, String corpusname, InputStream inputFile) throws IOException, ParseException {
         super(corpusname);
+        CsvBasedConversation.cols = cols;
         CsvReader reader = new CsvReader(new InputStreamReader(inputFile));
         if (!reader.readHeaders()) {
             throw new RuntimeException("Empty input file?");
@@ -67,8 +74,12 @@ public class CsvBasedConversation extends ConversationImpl {
         Map<String,Post> postMap = new HashMap<String, Post>();
 
         while (reader.readRecord()) {
-            PostImpl p = new PostImpl(reader.get(Column.ID.getColumnName()),reader.get(Column.REPLY.getColumnName()),
-                    reader.get(Column.AUTHOR.getColumnName()),parseDate(reader.get(Column.CREATED.getColumnName())));
+
+
+
+            if (skip(reader)) continue;
+            PostImpl p = new PostImpl(processString(Column.ID, reader),processString(Column.REPLY, reader),
+                    processString(Column.AUTHOR, reader),processDate(Column.CREATED,reader));
             p.setContent(reader.get(Column.TEXT.getColumnName()));
             postMap.put(p.getPostid(),p);
 
@@ -103,6 +114,19 @@ public class CsvBasedConversation extends ConversationImpl {
 
     }
 
+    public boolean skip(CsvReader reader) throws IOException {
+        return false;
+    }
+
+    public String processString(Column field, CsvReader reader) throws IOException {
+        return (String)reader.get(field.getColumnName());
+    }
+
+    public Date processDate(Column field, CsvReader reader) throws ParseException, IOException {
+        return format.parse(processString(field,reader));
+    }
+
+
     public void addChildren(Post top, DiscussionThreadImpl thread, Map<Post,Set<Post>> childmap) {
         if (!childmap.containsKey(top)) return;
         Set<Post> children = childmap.get(top);
@@ -112,9 +136,7 @@ public class CsvBasedConversation extends ConversationImpl {
         }
     }
 
-    public Date parseDate(String text) throws ParseException {
-        return format.parse(text);
-    }
+
 
     private static class PostImpl implements Post {
 

@@ -3,6 +3,7 @@ package edu.mit.cci.teva.analysis;
 import edu.mit.cci.sna.Node;
 import edu.mit.cci.teva.engine.Community;
 import edu.mit.cci.teva.engine.CommunityModel;
+import edu.mit.cci.teva.util.Stringer;
 
 import java.io.OutputStream;
 import java.util.ArrayList;

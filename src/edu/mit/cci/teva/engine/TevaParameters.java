@@ -1,7 +1,9 @@
 package edu.mit.cci.teva.engine;
 
+import edu.mit.cci.sna.jung.JungUtils;
 import edu.mit.cci.teva.serialization.ParameterAdapter;
 import edu.mit.cci.teva.util.ScoringMethod;
+import org.apache.log4j.Logger;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Properties;
 @XmlJavaTypeAdapter(ParameterAdapter.class)
 public class TevaParameters extends Properties {
 
+    private static Logger logger = Logger.getLogger(TevaParameters.class);
 
     public static String MINIMUM_LINK_WEIGHT = "minimum_link_weight";
     public static String FIXED_CLIQUE_SIZE = "fixed_clique_size";
@@ -39,16 +42,21 @@ public class TevaParameters extends Properties {
     private static final String MEMBERSHIP_WINDOW_DELTA = "membership_window_delta";
     private static final String COS_MAX_CLIQUES_EXECUTABLE = "cos_max_cliques_executable";
     private static final String COS_EXECUTABLE = "cos_executable";
+    private static final String CPM_PARAMETERS = "cpm_parameters";
+    private static final String PARALLEL_NETWORK_MERGE_POLICY="parallel_network_merge_policy";
 
 
     public TevaParameters(InputStream input) throws IOException {
         super();
         if (input == null) {
+            logger.info("Could not load properties - falling back to default");
             this.load(getClass().getResourceAsStream("/teva.default.properties"));
 
         }   else {
             this.load(input);
         }
+
+        logger.info("Loaded properties: "+this);
     }
 
     public TevaParameters() throws IOException {
@@ -264,5 +272,17 @@ public class TevaParameters extends Properties {
 
     public void setCosExecutable(String s) {
         setProperty(COS_EXECUTABLE,s);
+    }
+
+    public String getCpmParameters() {
+        return getProperty(CPM_PARAMETERS,"");
+    }
+
+    public void setCpmParameters(String params) {
+        setProperty(CPM_PARAMETERS,params);
+    }
+
+    public String getParallelNetworkMergePolicy() {
+       return getProperty(PARALLEL_NETWORK_MERGE_POLICY, JungUtils.MergePolicy.MAX.name());
     }
 }

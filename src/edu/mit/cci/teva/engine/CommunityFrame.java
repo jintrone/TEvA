@@ -8,6 +8,7 @@ import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,7 +59,7 @@ public class CommunityFrame extends UndirectedJungNetwork {
 
     public String toString() {
 
-        return "CF:"+ (community==null?"(no community)":community.getId()+getWindow());
+        return "CF:"+ ((community==null?"(no community)":"("+community.getId()+")")+getWindow());
     }
 
 
@@ -81,8 +82,14 @@ public class CommunityFrame extends UndirectedJungNetwork {
         return cliques;
     }
 
+
+
+    public int hashCode() {
+        return (this.getEdges().hashCode() + window)*13 + 7;
+    }
+
     public boolean equals(CommunityFrame cf) {
-        return cf.window == this.window && this.cliques.equals(cf.cliques) &&
+        return cf.window == this.window &&
                 this.getEdges().equals(cf.getEdges());
     }
 

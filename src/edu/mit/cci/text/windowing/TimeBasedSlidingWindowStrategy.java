@@ -16,10 +16,10 @@ import java.util.List;
  * Date: 5/23/11
  * Time: 6:18 PM
  */
-public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements WindowStrategy<Windowable> {
+public class TimeBasedSlidingWindowStrategy implements WindowStrategy<Windowable> {
 
     int numWindows = 1;
-    List<Windowable> current;
+    List<? extends Windowable> current;
     Date min, max;
     long size;
     long delta;
@@ -45,7 +45,7 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         return numWindows;
     }
 
-    public void setData(List<Windowable> args) {
+    public void setData(List<? extends Windowable> args) {
         this.current = args;
     }
 
@@ -82,7 +82,7 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         }
 
 
-        List<Windowable> result = current.subList(first, last);
+        List<Windowable> result = new ArrayList<Windowable>(current.subList(first, last));
 
         return result;
     }
@@ -95,6 +95,8 @@ public class TimeBasedSlidingWindowStrategy<T extends Windowable> implements Win
         return dates.toArray(new Date[dates.size()][]);
 
     }
+
+
 
 
 }

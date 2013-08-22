@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -126,13 +125,37 @@ public class NetworkUtils {
         }
     }
 
+    public static Network combine(Network one, Network two) {
+        UndirectedJungNetwork result = new UndirectedJungNetwork();
+        for (Edge e : one.getEdges()) {
+            result.add(e);
+        }
+        for (Edge e : two.getEdges()) {
+            Node a = e.getEndpoints()[0];
+            Node b = e.getEndpoints()[1];
+            Edge c = result.findEdge(a, b);
+            if (c != null) {
+                if (e.getWeight() > c.getWeight()) {
+                    c.setWeight(e.getWeight());
+                }
+            } else {
+                result.add(e);
+            }
+
+
+        }
+        return result;
+    }
+
+
+
     public static void createNetworkFile(Network adapter, File f, boolean edgeWeights) throws IOException {
         //String filename = prefix + "." + System.currentTimeMillis() + Math.random() + ".net";
 
         PrintWriter output = new PrintWriter(new FileWriter(f));
-        output.println("#" + new Date());
+        //output.println("#" + new Date());
         for (Edge e : adapter.getEdges()) {
-            output.println(e.getEndpoints()[0].getLabel() + " " + e.getEndpoints()[1].getLabel() + (edgeWeights?" " + e.getWeight():""));
+            output.println(e.getEndpoints()[0].getLabel() + " " + e.getEndpoints()[1].getLabel() + (edgeWeights ? " " + e.getWeight() : ""));
         }
         output.flush();
         output.close();
@@ -141,14 +164,12 @@ public class NetworkUtils {
     public static String simpleString(Network n) {
         StringBuilder builder = new StringBuilder();
         builder.append("Net[");
-        for (Node node:n.getNodes()) {
+        for (Node node : n.getNodes()) {
             builder.append(node.getLabel()).append(",");
         }
         builder.append("]");
         return builder.toString();
     }
-
-
 
 
     public static Network readNetworkFile(File f) throws IOException {
@@ -161,7 +182,12 @@ public class NetworkUtils {
 
 
             String[] tokens = line.split("\\s+");
-            network.add(new EdgeImpl(new NodeImpl(tokens[0]), new NodeImpl(tokens[1]), Float.parseFloat(tokens[2]), false));
+            if (tokens.length == 3) {
+                network.add(new EdgeImpl(new NodeImpl(tokens[0]), new NodeImpl(tokens[1]), Float.parseFloat(tokens[2]), false));
+
+            } else {
+                network.add(new EdgeImpl(new NodeImpl(tokens[0]), new NodeImpl(tokens[1]), 1.0f, false));
+            }
         }
         return network;
     }

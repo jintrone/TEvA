@@ -1,13 +1,16 @@
 package edu.mit.cci.teva;
 
+import edu.mit.cci.sna.jung.JungUtils;
 import edu.mit.cci.teva.cpm.cfinder.CFinderCommunityFinder;
 import edu.mit.cci.teva.engine.BasicStepStrategy;
+import edu.mit.cci.teva.engine.BinningMembershipEngine;
 import edu.mit.cci.teva.engine.CommunityFinder;
 import edu.mit.cci.teva.engine.CommunityModel;
 import edu.mit.cci.teva.engine.EvolutionStepStrategy;
 import edu.mit.cci.teva.engine.FastMergeStrategy;
 import edu.mit.cci.teva.engine.MergeStrategy;
 import edu.mit.cci.teva.engine.TevaParameters;
+import edu.mit.cci.teva.engine.TopicMembershipEngine;
 import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.model.DiscussionThread;
 import edu.mit.cci.teva.model.Post;
@@ -17,9 +20,13 @@ import edu.mit.cci.text.preprocessing.DictionaryMunger;
 import edu.mit.cci.text.preprocessing.Munger;
 import edu.mit.cci.text.preprocessing.StopwordMunger;
 import edu.mit.cci.text.preprocessing.Tokenizer;
+import edu.mit.cci.text.windowing.BasicBinningStrategy;
+import edu.mit.cci.text.windowing.BinningStrategy;
+import edu.mit.cci.text.windowing.SingleThreadBinningStrategy;
 import edu.mit.cci.text.windowing.TimeBasedSlidingWindowStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
+import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
 import edu.mit.cci.text.wordij.LinearWeightNetworkGenerator;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
 import org.apache.log4j.Logger;
@@ -38,8 +45,8 @@ import java.util.List;
  */
 public class DefaultTevaFactory implements TevaFactory {
 
-    private TevaParameters params;
-    private Conversation conversation;
+    protected TevaParameters params;
+    protected Conversation conversation;
     private static Logger log = Logger.getLogger(DefaultTevaFactory.class);
 
     public DefaultTevaFactory(TevaParameters params, Conversation conversation) {
@@ -101,7 +108,7 @@ public class DefaultTevaFactory implements TevaFactory {
         return new WindowStrategy.Factory<Windowable>() {
 
             public WindowStrategy<Windowable> getStrategy() {
-                return new TimeBasedSlidingWindowStrategy<Windowable>(conversation.getFirstPost().getTime(), conversation.getLastPost().getTime(), params.getWindowSize(), params.getWindowDelta());
+                return new TimeBasedSlidingWindowStrategy(conversation.getFirstPost().getTime(), conversation.getLastPost().getTime(), params.getWindowSize(), params.getWindowDelta());
             }
         };
     }
@@ -110,7 +117,7 @@ public class DefaultTevaFactory implements TevaFactory {
         return new WindowStrategy.Factory<Windowable>() {
 
             public WindowStrategy<Windowable> getStrategy() {
-                return new TimeBasedSlidingWindowStrategy<Windowable>(conversation.getFirstPost().getTime(), conversation.getLastPost().getTime(), params.getMembershipWindowSize(), params.getMembershipWindowDelta());
+                return new TimeBasedSlidingWindowStrategy(conversation.getFirstPost().getTime(), conversation.getLastPost().getTime(), params.getMembershipWindowSize(), params.getMembershipWindowDelta());
             }
         };
     }
@@ -119,8 +126,26 @@ public class DefaultTevaFactory implements TevaFactory {
         return new LinearWeightNetworkGenerator(params.getWordijIndirection(), params.getWordijTupleSize());
     }
 
+
+    public CorpusToNetworkGenerator<Windowable> getNetworkGenerator(BinningStrategy<Windowable> binningStrategy) {
+        return new CorpusToNetworkGenerator<>(binningStrategy,this.getNetworkCalculator(),params.getOverwriteNetworks(), JungUtils.MergePolicy.valueOf(params.getParallelNetworkMergePolicy()));
+    }
+
     public CommunityFinder getFinder() {
         return new CFinderCommunityFinder(params.getOverwriteNetworks(), params.getOverwriteAnalyses(), params);
+    }
+
+    public BinningStrategy<Windowable> getTopicBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable> windows) {
+        return new BasicBinningStrategy<Windowable>(data, windows);
+
+    }
+
+    public BinningStrategy<Windowable> getMembershipBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable>windows) {
+        return new BasicBinningStrategy<Windowable>(data, windows);
+    }
+
+    public TopicMembershipEngine getTopicMembershipEngine(CommunityModel model) {
+        return new BinningMembershipEngine(model, conversation, this);
     }
 
 

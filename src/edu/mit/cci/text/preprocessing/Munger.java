@@ -10,7 +10,8 @@ package edu.mit.cci.text.preprocessing;
 import java.util.List;
 
 /**
- * Generic interface for manipulating words from a data set
+ * Generic interface for manipulating words from a data set - for handling things like stemming and stop lists
+ * Not appropriate for block level operations (e.g. removing quoted sections)
  */
 public interface Munger {
 

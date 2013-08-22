@@ -12,10 +12,10 @@ import java.util.List;
  * Date: 9/28/12
  * Time: 9:55 PM
  */
-public class PrecomputedTimeWindowStrategy<T extends Windowable> implements WindowStrategy<Windowable> {
+public class PrecomputedTimeWindowStrategy implements WindowStrategy<Windowable> {
 
     Date[][] windows;
-    List<Windowable> data;
+    List<? extends Windowable> data;
 
     public PrecomputedTimeWindowStrategy(Date[]... windows) {
         this.windows = windows;
@@ -48,7 +48,7 @@ public class PrecomputedTimeWindowStrategy<T extends Windowable> implements Wind
             while (end < data.size() && data.get(end).getStart().compareTo(windows[i][1]) <= 0) {
                 end++;
             }
-            return data.subList(start, end);
+            return (List<Windowable>) data.subList(start, end);
         }
 
 
@@ -58,8 +58,11 @@ public class PrecomputedTimeWindowStrategy<T extends Windowable> implements Wind
         return windows;
     }
 
-    public void setData(List<Windowable> data) {
+
+
+    public void setData(List<? extends Windowable> data) {
         this.data = data;
     }
+
 
 }

@@ -30,6 +30,10 @@ public class Clique {
         setId(MAX_ID + 1);
     }
 
+//    public Clique(int capacity) {
+//        setId(MAX_ID + 1);
+//    }
+
     private void setId(int id) {
         this.id = id;
         MAX_ID = Math.max(id, MAX_ID);
@@ -48,6 +52,10 @@ public class Clique {
     @XmlAttribute(name = "id")
     public int getId() {
         return id;
+    }
+
+    public void addNode(String node) {
+        this.nodes.add(node);
     }
 
     public void setNodes(Collection<String> nodes) {

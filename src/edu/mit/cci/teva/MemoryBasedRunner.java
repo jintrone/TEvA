@@ -6,7 +6,7 @@ import edu.mit.cci.teva.cpm.cfinder.CFinderCommunityFinder;
 import edu.mit.cci.teva.engine.*;
 import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.util.TevaUtils;
-import edu.mit.cci.text.windowing.BasicBinningStrategy;
+import edu.mit.cci.text.windowing.BinningStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
@@ -23,7 +23,7 @@ import java.util.List;
  * Date: 10/3/12
  * Time: 9:39 PM
  */
-public class MemoryBasedRunner {
+public class MemoryBasedRunner implements TevaRunner {
 
 
     Logger log = Logger.getLogger(MemoryBasedRunner.class);
@@ -37,28 +37,28 @@ public class MemoryBasedRunner {
         this.conversation = c;
         this.params = new TevaParameters();
         this.factory = new DefaultTevaFactory(params,conversation);
-        process();
+        //process();
     }
 
     public MemoryBasedRunner(Conversation c, InputStream parameters) throws IOException, CommunityFinderException, JAXBException {
         this.conversation = c;
         this.params = new TevaParameters(parameters);
         this.factory = new DefaultTevaFactory(params,conversation);
-        process();
+        //process();
     }
 
      public MemoryBasedRunner(Conversation c, InputStream parameters, TevaFactory factory) throws IOException, CommunityFinderException, JAXBException {
         this.conversation = c;
         this.params = new TevaParameters(parameters);
         this.factory =factory;
-        process();
+        //process();
     }
 
     public MemoryBasedRunner(Conversation c, TevaParameters parameters, TevaFactory factory) throws IOException, CommunityFinderException, JAXBException {
         this.conversation = c;
         this.params = parameters;
         this.factory =factory;
-        process();
+        //process();
     }
 
 
@@ -92,9 +92,10 @@ public class MemoryBasedRunner {
                 }
             };
         } else {
-            BasicBinningStrategy<Windowable> binningStrategy = new BasicBinningStrategy<Windowable>(factory.getConversationData(), factory.getTopicWindowingFactory());
+            BinningStrategy<Windowable> binningStrategy =  factory.getTopicBinningStrategy(factory.getConversationData(), factory.getTopicWindowingFactory());
+
             CorpusToNetworkGenerator<Windowable> networkGenerator = new CorpusToNetworkGenerator<Windowable>(binningStrategy, factory.getNetworkCalculator());
-            final List<Network> result = networkGenerator.analyze();
+            final List<Network> result = networkGenerator.analyzeToMemory();
             log.info("Done creating networks.");
             provider = new NetworkProvider() {
                 public int getNumberWindows() {
@@ -116,9 +117,9 @@ public class MemoryBasedRunner {
         CommunityModel model = new CommunityModel(params,factory.getTopicWindowingFactory().getStrategy().getWindowBoundaries(),conversation.getName());
         EvolutionEngine engine = new EvolutionEngine(model,params, provider, factory.getFinder(), factory.getStepper(model), factory.getMerger());
         engine.process();
-        TopicMembershipEngine membershipEngine = new TopicMembershipEngine(model,conversation,factory);
+        BinningMembershipEngine membershipEngine = new BinningMembershipEngine(model,conversation,factory);
         membershipEngine.process();
-        TevaUtils.serialize(new File("CommunityOutput."+conversation.getName()+"."+params.getFilenameIdentifier()+".xml"), model, CommunityModel.class);
+        TevaUtils.serialize(new File(params.getWorkingDirectory()+"/CommunityOutput."+conversation.getName()+"."+params.getFilenameIdentifier()+".xml"), model, CommunityModel.class);
 
     }
 

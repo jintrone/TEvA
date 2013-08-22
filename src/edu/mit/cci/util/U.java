@@ -1,15 +1,11 @@
 package edu.mit.cci.util;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
-import java.util.RandomAccess;
 
 /**
  * User: jintrone
@@ -18,7 +14,7 @@ import java.util.RandomAccess;
  */
 public class U {
 
-       public static <T, V> int binarySearch(List<? extends T> list, V key, Comparator<? super V> c, Adapter<? super T, V> adapter) {
+    public static <T, V> int binarySearch(List<? extends T> list, V key, Comparator<? super V> c, Adapter<? super T, V> adapter) {
 
         if (list instanceof RandomAccess || list.size() < 5000)
             return indexedBinarySearch(list, key, c, adapter);
@@ -61,7 +57,7 @@ public class U {
         return -(low + 1);  // key not found
     }
 
-     /**
+    /**
      * 308        * Gets the ith element from the given list by repositioning the specified
      * 309        * list listIterator.
      * 310
@@ -94,6 +90,15 @@ public class U {
         public V adapt(T obj);
     }
 
+
+    public static Map<String, Object> mapify(Object... s) {
+        Map<String, Object> result = new HashMap();
+        for (int i = 1; i < s.length; i += 2) {
+            result.put(s[i - 1].toString(), s[i]);
+        }
+        return result;
+    }
+
     public static <T> Iterable<T> multiIterator(final Iterable<T>... cs) {
         return new Iterable<T>() {
 
@@ -119,7 +124,7 @@ public class U {
 
                     public T next() {
                         while (its.size() > 0 && !its.get(0).hasNext()) {
-                                its.remove(0);
+                            its.remove(0);
 
                         }
                         if (its.size() > 0) return its.get(0).next();
@@ -144,7 +149,7 @@ public class U {
     public static String[] mysplit(String str, String regx) {
         String[] tmp = str.split(regx);
         List<String> result = new ArrayList<String>();
-        for (String s:tmp) {
+        for (String s : tmp) {
             if (!s.isEmpty()) {
                 result.add(s);
             }
@@ -153,16 +158,24 @@ public class U {
     }
 
 
-     public static File getAnyFile(String message, String file) {
-        JFileChooser chooser = new JFileChooser(file);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        if (message != null && !message.isEmpty()) chooser.setDialogTitle(message);
-        int returnVal = chooser.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
+    public static File getAnyFile(String message, String file, int type) {
+        //JFileChooser chooser = new JFileChooser(file);
 
-            return f;
-        } else return null;
+        JFrame frame = new JFrame();
+        frame.setVisible(true);
+        FileDialog dialog = new FileDialog(frame);
+        dialog.setFile(file);
+        dialog.setVisible(true);
+        return dialog.getFiles()[0];
+
+//        chooser.setFileSelectionMode(type);
+//        if (message != null && !message.isEmpty()) chooser.setDialogTitle(message);
+//        int returnVal = chooser.showOpenDialog(frame);
+//        if (returnVal == JFileChooser.APPROVE_OPTION) {
+//            File f = chooser.getSelectedFile();
+//            frame.dispose();
+//            return f;
+//        } else return null;
     }
 
     public static boolean move(File f, File dest) {
@@ -170,9 +183,45 @@ public class U {
         if (dest.isFile()) {
             actualdest = dest;
         } else {
-            actualdest = new File(dest,f.getName());
+            actualdest = new File(dest, f.getName());
         }
         return f.renameTo(actualdest);
 
     }
+
+    public static <T> List<T> filter(List<T> filtered, Filter<T> f) {
+        List<T> result = new ArrayList<T>();
+        if (filtered != null && !filtered.isEmpty()) {
+            for (T obj : filtered) {
+                if (f.accept(obj)) {
+                    result.add(obj);
+                }
+            }
+        }
+        return result;
+
+    }
+
+    public static <T> MappingIterator<T> map(Collection<T> x) {
+        return new MappingIterator<T>(x);
+
+    }
+
+    public static class MappingIterator<T> {
+
+        Collection<T> c;
+
+        public MappingIterator(Collection<T> c) {
+            this.c = c;
+        }
+
+        public void forEach(F<T> fx) {
+            for (T a : c) {
+                fx.apply(a);
+            }
+        }
+
+    }
+
+
 }

@@ -31,9 +31,9 @@ public class CommunityFrameJaxbAdapter extends XmlAdapter<CommunityFrameJaxbAdap
        for (Edge e:jaxbAdapter.getEdges()) {
            result.add(e);
        }
-        for (Clique c:jaxbAdapter.getCliques()) {
-            result.addClique(c);
-        }
+//        for (Clique c:jaxbAdapter.getCliques()) {
+//            result.addClique(c);
+//        }
         return result;
     }
 

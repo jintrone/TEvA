@@ -4,6 +4,7 @@ package edu.mit.cci.teva.engine;
 
 
 import edu.mit.cci.teva.serialization.MapJaxbAdapter;
+import org.apache.log4j.Logger;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,9 +30,11 @@ import java.util.Set;
 
 @XmlRootElement(name = "model")
 public class CommunityModel {
+
+    private static Logger logger = Logger.getLogger(CommunityModel.class);
     
     @XmlElement(name = "communities")
-    List<Community> communities = new ArrayList<Community>();
+    List< Community > communities = new ArrayList<Community>();
 
     @XmlElement(name = "windows")
     Date[][] windows;
@@ -69,6 +72,11 @@ public class CommunityModel {
 
     public void addConnection(int bin, float weight, ConnectionType type, Community from, Community to) {
 
+
+        if (type == ConnectionType.CONSUMES && to.getMaxBin() < bin) {
+            logger.warn("Older community "+to.getId()+"consuming a newer one! "+from.getId());
+        }
+
         Set<Connection> conn = map(type).get(bin);
         if (conn == null) {
             map(type).put(bin,conn = new HashSet<Connection>());
@@ -90,7 +98,7 @@ public class CommunityModel {
 
 
     public Set<Connection> getConnection(int bin, ConnectionType  type) {
-        return map(type)!=null?map(type).get(bin): Collections.<Connection>emptySet();
+        return map(type)!=null?map(type).containsKey(bin)?map(type).get(bin):Collections.<Connection>emptySet(): Collections.<Connection>emptySet();
     }
 
     public Date[][] getWindows() {

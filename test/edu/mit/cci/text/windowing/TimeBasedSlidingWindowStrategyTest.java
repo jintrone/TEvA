@@ -37,7 +37,7 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
     public void testWindowsOnEdge() throws Exception {
         Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
         Date end = new GregorianCalendar(2000,1,1,9,3).getTime();
-        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,60*1000,60*1000);
+        TimeBasedSlidingWindowStrategy ts = new TimeBasedSlidingWindowStrategy(start,end,60*1000,60*1000);
         assertEquals("Incorrect number of windows", 4, ts.getNumberWindows());
 
     }
@@ -47,7 +47,7 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
         Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
         Date end = new GregorianCalendar(2000,1,1,9,3).getTime();
 
-        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,2*60*1000,60*1000);
+        TimeBasedSlidingWindowStrategy ts = new TimeBasedSlidingWindowStrategy(start,end,2*60*1000,60*1000);
         assertEquals("Incorrect number of windows", 3, ts.getNumberWindows());
 
 
@@ -57,7 +57,7 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
         Date start = new GregorianCalendar(2000,1,1,9,0).getTime();
         Date end = new GregorianCalendar(2000,1,1,9,4).getTime();
 
-        TimeBasedSlidingWindowStrategy<Windowable> ts = new TimeBasedSlidingWindowStrategy<Windowable>(start,end,2*60*1000,60*1000);
+        TimeBasedSlidingWindowStrategy ts = new TimeBasedSlidingWindowStrategy(start,end,2*60*1000,60*1000);
         assertEquals("Incorrect number of windows", 4, ts.getNumberWindows());
 
 
@@ -85,7 +85,7 @@ public class TimeBasedSlidingWindowStrategyTest extends TestCase {
             //ignore
         }
         List<Windowable> w = MockWindowable.getWindows(dates);
-        TimeBasedSlidingWindowStrategy<Windowable> strat = new TimeBasedSlidingWindowStrategy<Windowable>(dates[0],dates[dates.length-1],30*60*1000,9*60*1000);
+        TimeBasedSlidingWindowStrategy strat = new TimeBasedSlidingWindowStrategy(dates[0],dates[dates.length-1],30*60*1000,9*60*1000);
         int[][] expect = new int[][] {
                 {0,1}, //12:00 - 12:30
                 {1,2}, //12:09 - 12:39

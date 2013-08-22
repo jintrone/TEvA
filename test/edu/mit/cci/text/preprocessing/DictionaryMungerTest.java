@@ -1,8 +1,9 @@
 package edu.mit.cci.text.preprocessing;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+
+
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class DictionaryMungerTest extends TestCase {
     }
 
 
-    public static Test suite() {
+    public static TestSuite suite() {
         return new TestSuite(DictionaryMungerTest.class);
     }
 }

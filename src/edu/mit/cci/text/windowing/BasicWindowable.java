@@ -67,6 +67,15 @@ public class BasicWindowable implements Windowable {
         return id;
     }
 
+    public boolean equals(Object w) {
+       return (w instanceof Windowable && ((Windowable)w).getId().equals(getId()) && ((Windowable)w).getStart().equals(getStart()));
+
+    }
+
+    public int hashCode() {
+        return (getId().hashCode()+getStart().hashCode())*13+27;
+    }
+
 
 
     public static class JaxbAdapter extends XmlAdapter<BasicWindowable, Windowable> {

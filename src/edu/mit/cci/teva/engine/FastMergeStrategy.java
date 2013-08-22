@@ -50,13 +50,15 @@ public class FastMergeStrategy implements MergeStrategy {
      * and merges them where appropriate, or extends them if abutting edges that are not already
      * in cliques should be added.
      *
+     *
      * @param from
      * @param cdfrom
      * @param to
      * @param cdto
+     * @param window
      * @return
      */
-    public List<Network> process(Network from, Collection<CommunityFrame> cdfrom, Network to, Collection<CommunityFrame> cdto)  {
+    public List<Network> process(Network from, Collection<CommunityFrame> cdfrom, Network to, Collection<CommunityFrame> cdto, int window)  {
         cliqueAdjacencyNodeMap.clear();
 
 
@@ -338,7 +340,7 @@ public class FastMergeStrategy implements MergeStrategy {
             List<CommunityFrame> frames2 = finder.findCommunities(two, 4, 1);
 
             FastMergeStrategy strategy = new FastMergeStrategy(4);
-            List<Network> result = strategy.process(none, frames1, ntwo, frames2);
+            List<Network> result = strategy.process(none, frames1, ntwo, frames2, 0);
             for (Network n : result) {
                 //log.info("Network: " + n.getNodes());
             }

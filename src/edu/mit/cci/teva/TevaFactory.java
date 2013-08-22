@@ -1,12 +1,15 @@
 package edu.mit.cci.teva;
 
+import com.sun.java.swing.plaf.windows.resources.windows;
 import edu.mit.cci.teva.engine.CommunityFinder;
 import edu.mit.cci.teva.engine.CommunityModel;
 import edu.mit.cci.teva.engine.EvolutionStepStrategy;
 import edu.mit.cci.teva.engine.MergeStrategy;
 import edu.mit.cci.text.preprocessing.Tokenizer;
+import edu.mit.cci.text.windowing.BinningStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
+import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
 
 import java.io.IOException;
@@ -33,4 +36,10 @@ public interface TevaFactory {
     public TextToNetworkGenerator getNetworkCalculator();
 
     public CommunityFinder getFinder();
+
+    public BinningStrategy<Windowable> getTopicBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable> windows);
+
+    public BinningStrategy<Windowable> getMembershipBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable>windows);
+
+    CorpusToNetworkGenerator<Windowable> getNetworkGenerator(BinningStrategy<Windowable> binningStrategy);
 }

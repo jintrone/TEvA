@@ -1,11 +1,9 @@
 package edu.mit.cci.text.preprocessing;
 
-import edu.mit.cci.text.preprocessing.CompositeMunger;
-import edu.mit.cci.text.preprocessing.MockMunger;
-import edu.mit.cci.text.preprocessing.Munger;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+
+
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +61,7 @@ public class CompositeMungerTest extends TestCase {
 
 
 
-    public static Test suite() {
+    public static TestSuite suite() {
         return new TestSuite(CompositeMungerTest.class);
     }
 }

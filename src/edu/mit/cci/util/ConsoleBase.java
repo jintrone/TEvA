@@ -14,7 +14,8 @@ import java.util.regex.Pattern;
  * Time: 9:09 AM
  */
 public class ConsoleBase {
-    protected Scanner s;Map<Integer, MethodRunner> methodRunnerMap = new HashMap<Integer, MethodRunner>();
+    protected Scanner s;
+    Map<Integer, MethodRunner> methodRunnerMap = new HashMap<Integer, MethodRunner>();
     String docstring = "";
 
 
@@ -41,9 +42,8 @@ public class ConsoleBase {
 
         methodRunnerMap.put(i, new MethodRunner(e, e.getAnnotation(ConsoleDocumentation.class).value()));
         buildDocString();
-         waitForInput();
+        waitForInput();
     }
-
 
 
     public void buildDocString() {
@@ -100,8 +100,18 @@ public class ConsoleBase {
     }
 
     public String askUser(String question) {
-        System.out.print(question+" ");
+        System.out.print(question + " ");
         return s.nextLine();
+    }
+
+    public String askUser(String question, String def) {
+        System.out.print(question + " ["+def+"]");
+        String result = s.nextLine();
+        if (result.trim().isEmpty()) {
+            return def;
+        } else {
+            return result;
+        }
     }
 
     protected class MethodRunner {

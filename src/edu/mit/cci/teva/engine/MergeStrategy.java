@@ -11,5 +11,5 @@ import java.util.List;
  * Time: 5:14 PM
  */
 public interface MergeStrategy {
-    List<Network> process(Network from, Collection<CommunityFrame> cdfrom, Network to, Collection<CommunityFrame> cdto);
+    List<Network> process(Network from, Collection<CommunityFrame> cdfrom, Network to, Collection<CommunityFrame> cdto, int window);
 }
