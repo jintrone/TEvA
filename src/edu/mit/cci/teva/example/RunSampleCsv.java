@@ -40,7 +40,7 @@ public class RunSampleCsv {
             datafile = new FileInputStream(f);
             corpus = params.get(f.getName());
         } else {
-            datafile = ClassLoader.getSystemClassLoader().getResourceAsStream("/sampledata/MM15.csv");
+            datafile = ClassLoader.getSystemClassLoader().getResourceAsStream("sampledata/MM15.csv");
         }
         Conversation c = new CsvBasedConversation(corpus,datafile);
 
