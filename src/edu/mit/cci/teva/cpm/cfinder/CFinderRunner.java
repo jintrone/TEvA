@@ -22,7 +22,7 @@ public class CFinderRunner {
 
     private static Logger log = Logger.getLogger(CFinderRunner.class);
     public static String DEFAULT_CFINDER_EXECUTABLE = "/usr/local/bin/cfinder";
-    public static String DEFAULT_CFINDER_LICENSE = "/Applications/CFinder-v2.0.5/licence.txt";
+    public static String DEFAULT_CFINDER_LICENSE = "/Users/josh/Applications/CFinder-v2.0.5/licence.txt";
 
 
     public Map<CommandLineParams, String> params = new HashMap<CommandLineParams, String>();
@@ -117,7 +117,9 @@ public class CFinderRunner {
 
         log.info("Generating communities for " + inputFile.getName());
         long current = System.currentTimeMillis();
-        Process p = Runtime.getRuntime().exec(buildCommandLine(inputFile));
+        String cmdline = buildCommandLine(inputFile);
+        log.debug("Will execute: "+cmdline);
+        Process p = Runtime.getRuntime().exec(cmdline);
         StreamGobbler errorGobbler = new
                 StreamGobbler(p.getErrorStream(), "ERROR");
 

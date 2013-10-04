@@ -46,7 +46,7 @@ public class RunSampleCsv {
 
 
         TevaParameters tevaParams = new TevaParameters(props);
-        new MemoryBasedRunner(c,tevaParams,new DefaultTevaFactory(tevaParams,c));
+        new MemoryBasedRunner(c,tevaParams,new DefaultTevaFactory(tevaParams,c)).process();
     }
 
     public static void usage() {
