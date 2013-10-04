@@ -5,6 +5,7 @@ import edu.mit.cci.sna.Network;
 import edu.mit.cci.sna.NetworkUtils;
 import edu.mit.cci.teva.TevaFactory;
 import edu.mit.cci.teva.model.Conversation;
+import edu.mit.cci.teva.util.SimilarityBasedAssignment;
 import edu.mit.cci.text.preprocessing.Tokenizer;
 import edu.mit.cci.text.windowing.Bin;
 import edu.mit.cci.text.windowing.BinningStrategy;
@@ -31,6 +32,8 @@ public class BinningMembershipEngine implements TopicMembershipEngine {
 
     CommunityModel communities;
     private TevaFactory factory;
+
+    private CommunityMembershipStrategy strategy = new SimilarityBasedAssignment();
 
     private Map<Integer, Integer> activeThreads = new HashMap<Integer, Integer>();
 
@@ -66,31 +69,14 @@ public class BinningMembershipEngine implements TopicMembershipEngine {
     }
 
     public void assignToCommunity(int window, Network net, Bin<Windowable> bin) {
-
-
-        CommunityScore best = null;
-        for (Community c : communities.getCommunities()) {
-            float coverage = NetworkUtils.coverage(net, c.getCommunityAtBin(window));
-            float similarity = NetworkUtils.similarity(net, c.getCommunityAtBin(window));
-
-            //TODO handle the unlikely possibility there could be more than one match here.
-            if (coverage > 0) {
-                CommunityScore cs = new CommunityScore(window, c, coverage, similarity);
-                if (best == null) {
-                    best = cs;
-                } else if (best.coverage < cs.coverage || best.coverage == cs.coverage && best.similarity < cs.similarity) {
-                    best = cs;
-                }
+        Map<Community,List<ConversationChunk>> result = strategy.assignToCommunity(communities,window,net,bin);
+        for (Map.Entry<Community,List<ConversationChunk>> ent:result.entrySet()) {
+            for (ConversationChunk chunk:ent.getValue()) {
+               ent.getKey().addAssignment(chunk);
             }
-
-
         }
-        if (best == null) {
-            log.info("Could not identify topic for posts");
-        } else {
 
-            best.community.addAssignment(new ConversationChunk(bin.subList(bin.getFirstItemIndex(),bin.size()), window, best.coverage, best.similarity));
-        }
+
 
     }
 

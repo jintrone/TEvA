@@ -29,7 +29,8 @@ import java.util.Set;
  */
 
 @XmlRootElement(name = "model")
-public class CommunityModel {
+public class
+        CommunityModel {
 
     private static Logger logger = Logger.getLogger(CommunityModel.class);
     

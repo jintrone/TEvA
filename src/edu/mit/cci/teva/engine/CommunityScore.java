@@ -6,10 +6,10 @@ package edu.mit.cci.teva.engine;
 * Time: 11:38 PM
 */
 public class CommunityScore {
-    float coverage = 0.0f;
-    float similarity = 0.0f;
+    public float coverage = 0.0f;
+    public float similarity = 0.0f;
     int win = -1;
-    Community community = null;
+    public Community community = null;
 
     public CommunityScore(int win, Community community, float coverage, float similarity) {
         this.coverage = coverage;
