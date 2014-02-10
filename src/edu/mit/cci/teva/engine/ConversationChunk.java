@@ -1,10 +1,10 @@
 package edu.mit.cci.teva.engine;
 
+import edu.mit.cci.sna.Edge;
 import edu.mit.cci.text.windowing.Windowable;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,6 +14,7 @@ import java.util.List;
  */
 
 @XmlRootElement(name = "chunk")
+@XmlAccessorType(XmlAccessType.NONE)
 public class ConversationChunk {
 
     @XmlElement(name = "post")
@@ -23,6 +24,15 @@ public class ConversationChunk {
     public float coverage;
     @XmlAttribute
     public float similarity;
+
+    public Collection<Edge> edges;
+
+
+    @XmlElementWrapper(name = "edges")
+    @XmlElement(name = "edge")
+    public Collection<Edge> getEdges() {
+        return edges;
+    }
 
     @XmlAttribute
     public int window;
@@ -35,6 +45,17 @@ public class ConversationChunk {
         this.similarity = similarity;
         this.messages = messages;
     }
+
+    public ConversationChunk(List<Windowable> messages, int window, float coverage, float similarity,Collection<Edge> edges) {
+        this(messages,window,coverage,similarity);
+        this.edges = edges;
+    }
+
+    public void setEdges(Collection<Edge> edges) {
+        this.edges = edges;
+    }
+
+
 
 
 

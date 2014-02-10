@@ -26,11 +26,23 @@ public class AlphaNumericTokenizer implements Tokenizer<String> {
         this.munger = null;
     }
 
-    public List<String> tokenize(String input) {
-        String data = input;
-        data = data.replaceAll("'", "");
+    /**
+     * Default implementation remove quote characters, replaces all other punctuation with spaces, and
+     * compresses multiple spaces to single spaces
+     * @param input
+     * @return
+     */
+    protected String replace(String input) {
+        String data = input.replaceAll("'", "");
         data = data.replaceAll("[^\\p{Alnum}]+", " ");
         data = data.replaceAll("\\s+", " ");
+        data = data.replaceAll("\\s\\p{Alnum}\\s"," ");
+        return data;
+    }
+
+    public List<String> tokenize(String input) {
+        String data = replace(input);
+
         String[] words = data.split("\\s+");
         List<String> tokens = new ArrayList<String>();
 

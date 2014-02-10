@@ -36,8 +36,7 @@ public class PrecomputedTimeWindowStrategy implements WindowStrategy<Windowable>
             public Date adapt(Windowable obj) {
                 return obj.getStart();
             }
-        }
-        );
+        });
         if (start < 0) {
             start = -1 * (++start);
         }

@@ -52,6 +52,16 @@ public class NetworkUtils {
         return intersection.size() / (float) union.size();
     }
 
+
+    public static float centralityWeightedScore(Network one, Network two) {
+        if (one == null || two == null || one.getNodes().isEmpty() || two.getNodes().isEmpty()) return 0f;
+        Set<Edge> intersection = new HashSet<Edge>(one.getEdges());
+        intersection.retainAll(two.getEdges());
+        Set<Edge> union = new HashSet<Edge>(one.getEdges());
+        union.addAll(two.getEdges());
+        return intersection.size() / (float) union.size();
+    }
+
     public static List<Clique> findCliquesContaining(UndirectedJungNetwork graph, Set<Node> nodes, int k) {
         if (nodes.size() >= k) throw new RuntimeException("Clique size must be greater than incoming clique");
         Node[] nary = nodes.toArray(new Node[nodes.size()]);

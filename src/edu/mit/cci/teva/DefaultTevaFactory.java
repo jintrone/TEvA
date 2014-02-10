@@ -2,18 +2,11 @@ package edu.mit.cci.teva;
 
 import edu.mit.cci.sna.jung.JungUtils;
 import edu.mit.cci.teva.cpm.cfinder.CFinderCommunityFinder;
-import edu.mit.cci.teva.engine.BasicStepStrategy;
-import edu.mit.cci.teva.engine.BinningMembershipEngine;
-import edu.mit.cci.teva.engine.CommunityFinder;
-import edu.mit.cci.teva.engine.CommunityModel;
-import edu.mit.cci.teva.engine.EvolutionStepStrategy;
-import edu.mit.cci.teva.engine.FastMergeStrategy;
-import edu.mit.cci.teva.engine.MergeStrategy;
-import edu.mit.cci.teva.engine.TevaParameters;
-import edu.mit.cci.teva.engine.TopicMembershipEngine;
+import edu.mit.cci.teva.engine.*;
 import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.model.DiscussionThread;
 import edu.mit.cci.teva.model.Post;
+import edu.mit.cci.teva.util.SimilarityBasedAssignment;
 import edu.mit.cci.teva.util.WindowablePostAdapter;
 import edu.mit.cci.text.preprocessing.AlphaNumericTokenizer;
 import edu.mit.cci.text.preprocessing.DictionaryMunger;
@@ -22,7 +15,6 @@ import edu.mit.cci.text.preprocessing.StopwordMunger;
 import edu.mit.cci.text.preprocessing.Tokenizer;
 import edu.mit.cci.text.windowing.BasicBinningStrategy;
 import edu.mit.cci.text.windowing.BinningStrategy;
-import edu.mit.cci.text.windowing.SingleThreadBinningStrategy;
 import edu.mit.cci.text.windowing.TimeBasedSlidingWindowStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
@@ -81,10 +73,10 @@ public class DefaultTevaFactory implements TevaFactory {
         }
         if (params.getStopwordList() != null && !params.getStopwordList().isEmpty()) {
             if (params.getReplacementDictionary().startsWith("/") || params.getReplacementDictionary().startsWith(".")) {
-                mungers.add(StopwordMunger.read(new FileInputStream(params.getStopwordList())));
+                mungers.add(StopwordMunger.readAsNew(new FileInputStream(params.getStopwordList())));
                 log.info("Loaded stopword list from file: "+params.getStopwordList());
             } else {
-                mungers.add(StopwordMunger.read(getClass().getResourceAsStream(("/" + params.getStopwordList()))));
+                mungers.add(StopwordMunger.readAsNew(getClass().getResourceAsStream(("/" + params.getStopwordList()))));
                 log.info("Loaded stopword list from resource: "+params.getStopwordList());
             }
         }
@@ -96,7 +88,7 @@ public class DefaultTevaFactory implements TevaFactory {
     }
 
     public MergeStrategy getMerger() {
-        return new FastMergeStrategy(params.getFixedCliqueSize());
+        return new SlowMergeStrategy(getFinder(),params);
     }
 
     public EvolutionStepStrategy getStepper(CommunityModel model) {
@@ -123,7 +115,7 @@ public class DefaultTevaFactory implements TevaFactory {
     }
 
     public TextToNetworkGenerator getNetworkCalculator() {
-        return new LinearWeightNetworkGenerator(params.getWordijIndirection(), params.getWordijTupleSize());
+        return new LinearWeightNetworkGenerator(params.getWordijIndirection(), params.getWordijTupleSize(), params.getWordijMaxWeight());
     }
 
 
@@ -131,22 +123,29 @@ public class DefaultTevaFactory implements TevaFactory {
         return new CorpusToNetworkGenerator<>(binningStrategy,this.getNetworkCalculator(),params.getOverwriteNetworks(), JungUtils.MergePolicy.valueOf(params.getParallelNetworkMergePolicy()));
     }
 
+    @Override
+    public CommunityMembershipStrategy getMembershipMatchingStrategy() {
+        return new SimilarityBasedAssignment();
+    }
+
     public CommunityFinder getFinder() {
         return new CFinderCommunityFinder(params.getOverwriteNetworks(), params.getOverwriteAnalyses(), params);
     }
 
     public BinningStrategy<Windowable> getTopicBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable> windows) {
-        return new BasicBinningStrategy<Windowable>(data, windows);
+        return new BasicBinningStrategy<>(data, windows);
 
     }
 
     public BinningStrategy<Windowable> getMembershipBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable>windows) {
-        return new BasicBinningStrategy<Windowable>(data, windows);
+        return new BasicBinningStrategy<>(data, windows);
     }
 
-    public TopicMembershipEngine getTopicMembershipEngine(CommunityModel model) {
-        return new BinningMembershipEngine(model, conversation, this);
+    @Override
+    public TopicMembershipEngine getMembershipEngine(CommunityModel model, Conversation conversation) {
+        return new BinningMembershipEngine(model,conversation,this);
     }
+
 
 
 }

@@ -16,5 +16,5 @@ import java.io.IOException;
 public interface TevaRunner {
     NetworkProvider getNetworkProvider() throws IOException;
 
-    void process() throws IOException, CommunityFinderException, JAXBException;
+    void processAndSave() throws IOException, CommunityFinderException, JAXBException;
 }

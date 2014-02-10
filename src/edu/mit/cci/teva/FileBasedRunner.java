@@ -111,7 +111,7 @@ public abstract class FileBasedRunner implements TevaRunner{
 
     public abstract NetWriterStrategy getNetworkWriter();
 
-    public void process() throws IOException, CommunityFinderException, JAXBException {
+    public void processAndSave() throws IOException, CommunityFinderException, JAXBException {
         log.info("Begin process.");
         NetworkProvider provider = getNetworkProvider();
         CommunityModel model = new CommunityModel(params,factory.getTopicWindowingFactory().getStrategy().getWindowBoundaries(),conversation.getName());

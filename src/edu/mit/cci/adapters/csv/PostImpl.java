@@ -9,7 +9,7 @@ import java.util.List;
 /**
 * Created by josh on 1/20/14.
 */
-class PostImpl implements Post {
+public class PostImpl implements Post {
 
     public String postId,replyToId,threadId,userId,content;
     public Date creation;

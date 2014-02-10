@@ -11,13 +11,11 @@ import edu.mit.cci.text.windowing.Bin;
 import edu.mit.cci.text.windowing.BinningStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
+import edu.mit.cci.util.U;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: jintrone
@@ -45,39 +43,45 @@ public class BinningMembershipEngine implements TopicMembershipEngine {
 
         this.communities = communities;
         this.factory = factory;
+        strategy = factory.getMembershipMatchingStrategy();
 
     }
 
+
+
     public void process() throws IOException {
         log.debug("Running topic membership assignment");
-        List<List<Windowable>> data = factory.getConversationData();
         BinningStrategy<Windowable> binningStrategy = factory.getTopicBinningStrategy(factory.getConversationData(), factory.getTopicWindowingFactory());
-        Tokenizer<String> tokenizer = factory.getTokenizer();
         TextToNetworkGenerator generator = factory.getNetworkCalculator();
-
-        List<String> priorTokens;
+        Date[][] dates = factory.getTopicWindowingFactory().getStrategy().getWindowBoundaries();
         for (int i = 0; i < binningStrategy.getNumWindows(); i++) {
             List<Bin<Windowable>> dataAtWin = binningStrategy.getDataAtWindow(i);
 
             for (Bin<Windowable> dataInBin : dataAtWin) {
                 Network net = generator.calculateWeights(getTokens(0, dataInBin.getFirstItemIndex(), dataInBin), getTokens(dataInBin.getFirstItemIndex(), dataInBin.size(), dataInBin));
-                assignToCommunity(i, net, dataInBin);
+                int j =0;
+
+                //only assign data at the after the end of the previous window
+                if (i > 0) {
+                    for (;j<dataInBin.size();j++) {
+                        if (dataInBin.get(j).getStart().after(dates[i-1][1])) break;
+                    }
+                }
+                if (j < dataInBin.size()) assignToCommunity(i, net, dataInBin.subList(j, dataInBin.size()));
             }
 
         }
         log.debug("Done topic membership assignment");
     }
 
-    public void assignToCommunity(int window, Network net, Bin<Windowable> bin) {
-        Map<Community,List<ConversationChunk>> result = strategy.assignToCommunity(communities,window,net,bin);
-        for (Map.Entry<Community,List<ConversationChunk>> ent:result.entrySet()) {
-            for (ConversationChunk chunk:ent.getValue()) {
-               ent.getKey().addAssignment(chunk);
-            }
+
+
+    public void assignToCommunity(int window, Network net, List<Windowable> bin) {
+
+        List<CommunityMembershipStrategy.Assignment> assignments = strategy.assignToCommunity(communities,window,net);
+        for (CommunityMembershipStrategy.Assignment a: assignments) {
+            a.community.addAssignment(new ConversationChunk(bin, window, a.coverage, a.similarity,a.edges));
         }
-
-
-
     }
 
 

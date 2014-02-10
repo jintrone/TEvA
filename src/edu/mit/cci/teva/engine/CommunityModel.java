@@ -40,6 +40,10 @@ public class
     @XmlElement(name = "windows")
     Date[][] windows;
 
+    public TevaParameters getParameters() {
+        return parameters;
+    }
+
     @XmlElement(name = "parameters")
     TevaParameters parameters;
 
@@ -54,6 +58,10 @@ public class
     @XmlJavaTypeAdapter(MapJaxbAdapter.class)
     @XmlElement(name="informs")
     public Map<Integer,Set<Connection>> informs = new HashMap<Integer,Set<Connection>>();
+
+    public String getCorpusName() {
+        return corpusName;
+    }
 
     @XmlElement(name = "corpus")
     private String corpusName;

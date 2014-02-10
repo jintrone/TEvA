@@ -1,9 +1,11 @@
 package edu.mit.cci.teva.engine;
 
+import edu.mit.cci.sna.Edge;
 import edu.mit.cci.sna.Network;
 import edu.mit.cci.text.windowing.Bin;
 import edu.mit.cci.text.windowing.Windowable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,27 @@ import java.util.Map;
  */
 public interface CommunityMembershipStrategy {
 
-    public Map<Community,List<ConversationChunk>> assignToCommunity(CommunityModel communities,int window, Network net, Bin<Windowable> bin);
+    public List<Assignment> assignToCommunity(CommunityModel communities, int window, Network net);
+
+    public static class Assignment {
+
+        public float coverage;
+        public float similarity;
+        public Community community;
+        public Collection<Edge> edges;
+
+        public Assignment(Community c, float coverage, float similarity) {
+            this.coverage = coverage;
+            this.similarity = similarity;
+            this.community = c;
+        }
+
+        public Assignment(Community c, float coverage, float similarity, Collection<Edge> edges) {
+           this(c,coverage,similarity);
+            this.edges = edges;
+        }
+
+    }
+
 
 }

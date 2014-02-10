@@ -32,6 +32,7 @@ public class TevaParameters extends Properties {
     public static final String STOPWORD_LIST = "stopword_list";
     public static final String SLIDING_WINDOW_DELTA = "sliding_window_delta";
     public static final String SLIDING_WINDOW_SIZE = "sliding_window_size";
+    public static final String WORDIJ_MAX_WEIGHT = "wordij_max_weight";
     public static final String WORDIJ_INDIRECTION_SIZE = "wordij_indirection_size";
     public static final String WORDIJ_TUPLE_SIZE = "wordij_tuple_size";
     public static final String WORKING_DIRECTORY = "working_directory";
@@ -284,5 +285,13 @@ public class TevaParameters extends Properties {
 
     public String getParallelNetworkMergePolicy() {
        return getProperty(PARALLEL_NETWORK_MERGE_POLICY, JungUtils.MergePolicy.MAX.name());
+    }
+
+    public void setWordijMaxWeight(float weight) {
+        setProperty(WORDIJ_MAX_WEIGHT,weight+"");
+    }
+
+    public float getWordijMaxWeight() {
+        return Math.max(.1f,Math.min(Float.parseFloat(getProperty(WORDIJ_MAX_WEIGHT, 1.0f + "")),1.0f));
     }
 }

@@ -26,7 +26,7 @@ public class BasicWindowable implements Windowable {
     @XmlID
     public String id;
 
-    @XmlElement
+   // @XmlElement
     public String content;
 
     @XmlAttribute

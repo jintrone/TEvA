@@ -6,7 +6,10 @@ import edu.mit.cci.teva.TevaFactory;
 import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.model.DiscussionThread;
 import edu.mit.cci.teva.model.Post;
+import edu.mit.cci.teva.util.SimilarityBasedAssignment;
+import edu.mit.cci.teva.util.WindowablePostAdapter;
 import edu.mit.cci.text.preprocessing.Tokenizer;
+import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
 
 import java.io.IOException;
@@ -28,13 +31,17 @@ public class PreviousPostMembershipEngine implements TopicMembershipEngine {
     private final TevaFactory factory;
     private final Conversation conversation;
     private final CommunityModel model;
-    private Map<String, Post> postmap;
+    private Map<String, PostTokens> postmap;
     private Tokenizer<String> tokenizer;
     private TextToNetworkGenerator generator;
 
     private Map<String, String> communityAssignmentMap;
 
-    public PreviousPostMembershipEngine(CommunityModel model, Conversation conversation,  TevaFactory factory) {
+    private CommunityMembershipStrategy strategy;
+
+    private int numPreviousPosts = 1;
+
+    public PreviousPostMembershipEngine(CommunityModel model, Conversation conversation,  TevaFactory factory, int numPrevious) {
         this.factory = factory;
         this.conversation = conversation;
         this.model = model;
@@ -45,66 +52,73 @@ public class PreviousPostMembershipEngine implements TopicMembershipEngine {
             throw new RuntimeException(e);
         }
         generator = factory.getNetworkCalculator();
+        this.numPreviousPosts = numPrevious;
+       strategy = factory.getMembershipMatchingStrategy();
+    }
+
+    public PreviousPostMembershipEngine(CommunityModel model, Conversation conversation,  TevaFactory factory) {
+        this(model,conversation,factory,1);
+
 
     }
 
     public Map<String,String> getPostAssignment() {
-        return communityAssignmentMap;
+
+        throw new RuntimeException("This operation is no longer supported; please refactor this class to allow " +
+                "access to assignments without modifying community model");
     }
 
     public void process() throws IOException {
         communityAssignmentMap = new HashMap<String, String>();
         Date[][] windows = model.getWindows();
         List<Date> ends = new ArrayList<Date>();
-        postmap = new HashMap<String, Post>();
+        postmap = new HashMap<String, PostTokens>();
         for (Date[] w : windows) {
             ends.add(w[1]);
         }
 
         for (DiscussionThread t : conversation.getAllThreads()) {
             for (Post p : t.getPosts()) {
-                postmap.put(p.getPostid(), p);
-                int winstart = Collections.binarySearch(ends, p.getTime());
-                if (winstart < 0) {
-                    winstart = -(winstart + 1);
+                postmap.put(p.getPostid(), new PostTokens(p,tokenizer.tokenize(p.getContent())));
+                int win = Collections.binarySearch(ends, p.getTime());
+                if (win < 0) {
+                    win = -(win + 1);
                 }
-                int winend = winstart;
-                while (winend < ends.size() && windows[winend][0].before(p.getTime())) winend++;
-                findCommunityInWindows(p, winstart, winend);
+
+                findCommunityInWindows(p, win);
             }
         }
 
     }
 
-    public void findCommunityInWindows(Post p, int winstart, int winend) {
-        Post prior = postmap.get(p.getReplyToId());
-        List<String> tokens =  new ArrayList<String>();
-        if (prior!=null) tokens.addAll(tokenizer.tokenize(prior.getContent()));
-        tokens.addAll(tokenizer.tokenize(p.getContent()));
+    public List<String> getTokens(Post p) {
+        List<String> tokens = new ArrayList<String>();
+        PostTokens pt = postmap.get(p.getPostid());
+        for (int i =0;i<numPreviousPosts && p!=null;i++) {
+            tokens.addAll(pt.tokens);
+            pt = postmap.get(pt.post.getReplyToId());
+        }
+        return tokens;
+    }
 
+    public void findCommunityInWindows(Post p, int win) {
+
+        List<String> tokens =  getTokens(p);
         Network net = generator.calculateWeights(null, tokens);
-        CommunityScore best = null;
-        for (Community c : model.getCommunities()) {
-            for (int window = winstart; window < winend; window++) {
-                CommunityFrame f = c.getCommunityAtBin(window);
-                if (f == null) continue;
-                float coverage = NetworkUtils.coverage(net, f);
-                float similarity = NetworkUtils.similarity(net, f);
-
-                //TODO handle the unlikely possibility there could be more than one match here.
-                if (coverage > 0) {
-                    CommunityScore cs = new CommunityScore(window, c, coverage, similarity);
-                    if (best == null) {
-                        best = cs;
-                    } else if (best.coverage < cs.coverage || best.coverage == cs.coverage && best.similarity < cs.similarity) {
-                        best = cs;
-                    }
-                }
-            }
+        List<CommunityMembershipStrategy.Assignment> assignments = strategy.assignToCommunity(model,win,net);
+        for (CommunityMembershipStrategy.Assignment a: assignments) {
+            a.community.addAssignment(new ConversationChunk(Collections.singletonList((Windowable)new WindowablePostAdapter(p,tokenizer)), win, a.coverage, a.similarity,a.edges));
         }
 
-        if (best !=null) {
-            communityAssignmentMap.put(p.getPostid(),best.community.getId());
+    }
+
+    private class PostTokens {
+        Post post;
+        List<String> tokens;
+
+        PostTokens(Post p, List<String> tokens) {
+            this.post = p;
+            this.tokens = tokens;
         }
 
 

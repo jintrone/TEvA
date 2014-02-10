@@ -12,6 +12,7 @@ import java.util.List;
  * Date: 10/4/12
  * Time: 4:30 PM
  */
+
 public class WindowablePostAdapter implements Windowable {
 
     private Post post;

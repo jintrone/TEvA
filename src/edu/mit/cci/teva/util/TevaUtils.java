@@ -11,7 +11,13 @@ import edu.mit.cci.sna.jung.UndirectedJungNetwork;
 import edu.mit.cci.teva.engine.Community;
 import edu.mit.cci.teva.engine.CommunityFrame;
 import edu.mit.cci.teva.engine.CommunityModel;
+import edu.mit.cci.teva.engine.ConversationChunk;
+import edu.mit.cci.teva.model.Conversation;
+import edu.mit.cci.teva.model.DiscussionThread;
+import edu.mit.cci.teva.model.Post;
 import edu.mit.cci.teva.serialization.CommunityFrameJaxbAdapter;
+import edu.mit.cci.util.F;
+import edu.mit.cci.util.U;
 import edu.uci.ics.jung.algorithms.scoring.EigenvectorCentrality;
 import org.apache.commons.collections15.Transformer;
 import org.apache.log4j.Logger;
@@ -44,6 +50,52 @@ import java.util.Set;
 public class TevaUtils {
 
     private static Logger logger = Logger.getLogger(TevaUtils.class);
+
+    /**
+     * Iterate through a conversation and return a list of all posts sorted by time
+     *
+     * @param c The conversation
+     * @return A list of sorted posts
+     */
+    public static List<Post> getAllSortedPosts(Conversation c) {
+        final List<Post> result = new ArrayList<Post>();
+        U.map(c.getAllThreads()).forEach(new F<DiscussionThread>() {
+            public void apply(DiscussionThread discussionThread) {
+                U.map(discussionThread.getPosts()).forEach(new F<Post>() {
+                    public void apply(Post post) {
+                        result.add(post);
+                    }
+                });
+            }
+        });
+        Collections.sort(result,new Comparator<Post>() {
+            @Override
+            public int compare(Post o1, Post o2) {
+                return o1.getTime().compareTo(o2.getTime());
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Iterate through a conversation and return a list of all posts sorted by time
+     *
+     * @param c The conversation
+     * @return A list of sorted posts
+     */
+    public static Map<String,Post> getAllMappedPosts(Conversation c) {
+        final Map<String,Post> result = new HashMap<>();
+        U.map(c.getAllThreads()).forEach(new F<DiscussionThread>() {
+            public void apply(DiscussionThread discussionThread) {
+                U.map(discussionThread.getPosts()).forEach(new F<Post>() {
+                    public void apply(Post post) {
+                       result.put(post.getPostid(),post);
+                    }
+                });
+            }
+        });
+        return result;
+    }
 
     public static void serialize(Clique clique, File f) throws JAXBException, IOException {
         JAXBContext jc = JAXBContext.newInstance(Clique.class);
@@ -142,6 +194,13 @@ public class TevaUtils {
                     n.setProperty("Size", s.getNodes().size());
                     n.setProperty("Window", i);
                     n.setProperty("CommunityId", cs.getId());
+                    int numMessages =0;
+                    for (ConversationChunk chunk:cs.getAssignments()) {
+                        if (chunk.window == i) {
+                            numMessages+=chunk.messages.size();
+                        }
+                    }
+                    n.setProperty("Messages",numMessages);
                     //n.setProperty("Intensity", (int) (300.0f * (s..getIntegration() * s.getStats().getThreadFocus() * (s.getStats().getNumPosts() / (float) maxposts))));
 
                     nodes.add(n);

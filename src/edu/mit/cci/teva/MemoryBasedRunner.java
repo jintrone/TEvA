@@ -58,6 +58,7 @@ public class MemoryBasedRunner implements TevaRunner {
         this.conversation = c;
         this.params = parameters;
         this.factory =factory;
+
         //process();
     }
 
@@ -111,15 +112,21 @@ public class MemoryBasedRunner implements TevaRunner {
         return provider;
     }
 
-    public void process() throws IOException, CommunityFinderException, JAXBException {
+    public CommunityModel process() throws IOException, CommunityFinderException {
         log.info("Begin process.");
+        Community.reset();
         NetworkProvider provider = getNetworkProvider();
         CommunityModel model = new CommunityModel(params,factory.getTopicWindowingFactory().getStrategy().getWindowBoundaries(),conversation.getName());
         EvolutionEngine engine = new EvolutionEngine(model,params, provider, factory.getFinder(), factory.getStepper(model), factory.getMerger());
         engine.process();
-        BinningMembershipEngine membershipEngine = new BinningMembershipEngine(model,conversation,factory);
+        TopicMembershipEngine membershipEngine = factory.getMembershipEngine(model,conversation);
         membershipEngine.process();
-        TevaUtils.serialize(new File(params.getWorkingDirectory()+"/CommunityOutput."+conversation.getName()+"."+params.getFilenameIdentifier()+".xml"), model, CommunityModel.class);
+        return model;
+    }
+
+    public void processAndSave() throws IOException, CommunityFinderException, JAXBException {
+
+        TevaUtils.serialize(new File(params.getWorkingDirectory()+"/CommunityOutput."+conversation.getName()+"."+params.getFilenameIdentifier()+".xml"), process(), CommunityModel.class);
 
     }
 

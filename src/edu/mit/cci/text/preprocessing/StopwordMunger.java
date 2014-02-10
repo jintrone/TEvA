@@ -38,7 +38,7 @@ public class StopwordMunger implements Munger {
         }
     }
 
-    public static StopwordMunger read(InputStream is) throws IOException {
+    public static StopwordMunger readAsNew(InputStream is) throws IOException {
         List<String> result = new ArrayList<String>();
         String line = null;
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -46,6 +46,16 @@ public class StopwordMunger implements Munger {
            result.addAll(Arrays.asList(line.trim().split(" ")));
         }
         return new StopwordMunger(result.toArray(new String[result.size()]),false);
+    }
+
+    public static StopwordMunger readAndAdd(InputStream is) throws IOException {
+        List<String> result = new ArrayList<String>();
+        String line = null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        while ((line = reader.readLine())!=null) {
+            result.addAll(Arrays.asList(line.trim().split(" ")));
+        }
+        return new StopwordMunger(result.toArray(new String[result.size()]),true);
     }
 
 

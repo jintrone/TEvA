@@ -39,10 +39,16 @@ import java.util.Set;
 public abstract class AnalysisConsole extends ConsoleBase {
 
     private Properties props;
-    File pfile = new File("./.teva-analysis.properties");
+    File pfile;
 
 
     public AnalysisConsole() throws IOException {
+       this( "./.teva-analysis.properties");
+
+    }
+
+    public AnalysisConsole(String filename) throws IOException {
+        pfile =  new File(filename);
         props = new Properties();
         if (!pfile.exists()) {
             pfile.createNewFile();
@@ -53,7 +59,6 @@ public abstract class AnalysisConsole extends ConsoleBase {
         }
 
         start();
-
 
     }
 
@@ -99,7 +104,7 @@ public abstract class AnalysisConsole extends ConsoleBase {
         }
         DirectedJungNetwork network = TevaUtils.createCommunityGraph(model, spawns, true, informs);
         TevaUtils.addDrainageScoresForCommunityGraph(network);
-        JungUtils.writeGraphML(network, U.mapify("Size", 0, "Window", 0, "CommunityId", "", "Centrality", 0), filename + ".graphml");
+        JungUtils.writeGraphML(network, U.mapify("Size", 0, "Messages",0,"Window", 0, "CommunityId", "", "Centrality", 0), filename + ".graphml");
     }
 
     @ConsoleDocumentation(value = "Convert to CSV")

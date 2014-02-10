@@ -32,14 +32,15 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
 
     int maxIndirection = 2;
     int ngramsize = 2;
+    float maxweight = 1.0f;
 
 
     Logger log = Logger.getLogger(LinearWeightNetworkGenerator.class);
 
-    public LinearWeightNetworkGenerator(int maxindirection, int ngramsize) {
+    public LinearWeightNetworkGenerator(int maxindirection, int ngramsize,float maxWeight) {
         this.maxIndirection = maxindirection;
         this.ngramsize = ngramsize;
-
+        this.maxweight = maxWeight;
     }
 
 
@@ -75,7 +76,7 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
                 for (Node from:prebuffer) {
                     Edge edge = result.findEdge(from, vertex);
                      if (edge == null) {
-                         edge = new EdgeImpl(from, vertex, 1.0f, false);
+                         edge = new EdgeImpl(from, vertex, maxweight, false);
                          result.addEdge(edge, from, vertex);
                          log.debug("Adding prebuffered edge: " + edge);
 
@@ -98,11 +99,11 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
                     Edge edge = result.findEdge(from, to);
                     if (edge != null) {
                         //this shouldn't really happen.
-                        if (edge.getWeight() < 1.0f) {
-                            edge.setWeight(1.0f);
+                        if (edge.getWeight() < maxweight) {
+                            edge.setWeight(maxweight);
                         }
                     } else {
-                        edge = new EdgeImpl(from, to, 1.0f, false);
+                        edge = new EdgeImpl(from, to, maxweight, false);
                         result.addEdge(edge, from, to);
                         log.debug("Adding edge: " + edge);
 
@@ -117,14 +118,14 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
 
 
     private void updateIndirection(UndirectedJungNetwork graph) {
-        float delta = 1.0f / (float) maxIndirection;
+        float delta = maxweight / (float) maxIndirection;
         UnweightedShortestPath<Node, Edge> paths = new UnweightedShortestPath<Node, Edge>(graph);
         List<Edge> edges = new ArrayList<Edge>();
         for (Node node : graph.getVertices()) {
             Map<Node, Number> p = paths.getDistanceMap(node);
             for (Map.Entry<Node, Number> ent : p.entrySet()) {
-                if (ent.getValue().floatValue() > 1.0f && ent.getValue().floatValue() <= maxIndirection) {
-                    Edge nedge = new EdgeImpl(node, ent.getKey(), 1f - (ent.getValue().intValue() - 1) * delta, false);
+                if (ent.getValue().floatValue() > maxweight && ent.getValue().floatValue() <= maxIndirection) {
+                    Edge nedge = new EdgeImpl(node, ent.getKey(), maxweight - (ent.getValue().intValue() - 1) * delta, false);
                     edges.add(nedge);
                 }
             }
@@ -135,6 +136,8 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
             if (existing == null) {
                 graph.addEdge(edge, edge.getEndpoints()[0], edge.getEndpoints()[1]);
             } else {
+                //TODO this should be a policy of some kind
+                edge.setWeight(Math.min(1.0f,edge.getWeight()+existing.getWeight()));
                 if (edge.getWeight() > existing.getWeight()) {
                     existing.setWeight(edge.getWeight());
                 }

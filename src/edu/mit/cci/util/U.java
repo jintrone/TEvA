@@ -14,6 +14,26 @@ import java.util.List;
  */
 public class U {
 
+    //Collection methods
+
+    public static <T> T last(List<T> l) {
+        return (l==null || l.isEmpty())?null:l.get(l.size()-1);
+    }
+
+    public static <T> T first(List<T> l) {
+        return (l==null || l.isEmpty())?null:l.get(0);
+    }
+
+    public static <T> T first(Collection<T> c) {
+        return (c==null || c.isEmpty())?null:c.iterator().next();
+    }
+
+    //Slow!
+    public static <T> T last(Collection<T> c) {
+        return (c==null || c.isEmpty())?null:last(new ArrayList<>(c));
+    }
+
+
     public static <T, V> int binarySearch(List<? extends T> list, V key, Comparator<? super V> c, Adapter<? super T, V> adapter) {
 
         if (list instanceof RandomAccess || list.size() < 5000)
@@ -79,11 +99,22 @@ public class U {
 
     public static void delete(File f) throws IOException {
         if (f.isDirectory()) {
-            for (File c : f.listFiles())
+            for (File c : f.listFiles()) {
                 delete(c);
+            }
         }
+        f.delete();
 //        if (!f.delete())
 //            throw new FileNotFoundException("Failed to delete file: " + f);
+    }
+
+    public static void cleanDirectory(File f) throws IOException {
+        if (!f.isDirectory()) return;
+        else {
+            for (File f2:f.listFiles()) {
+                delete(f2);
+            }
+        }
     }
 
     public static interface Adapter<T, V> {
@@ -158,15 +189,19 @@ public class U {
     }
 
 
-    public static File getAnyFile(String message, String file, int type) {
+    public static File getAnyFileNative(String message, String file, int type) {
         //JFileChooser chooser = new JFileChooser(file);
 
         JFrame frame = new JFrame();
         frame.setVisible(true);
         FileDialog dialog = new FileDialog(frame);
+        dialog.setTitle(message);
         dialog.setFile(file);
+        dialog.setMode(type);
         dialog.setVisible(true);
-        return dialog.getFiles()[0];
+        File result =  dialog.getFiles()[0];
+        frame.dispose();
+        return result;
 
 //        chooser.setFileSelectionMode(type);
 //        if (message != null && !message.isEmpty()) chooser.setDialogTitle(message);
@@ -176,6 +211,21 @@ public class U {
 //            frame.dispose();
 //            return f;
 //        } else return null;
+    }
+
+    public static File getAnyFile(String message, String file, int type) {
+        //JFrame frame = new JFrame();
+        JFileChooser chooser = new JFileChooser(file);
+        chooser.setFileSelectionMode(type);
+        if (message != null && !message.isEmpty()) chooser.setDialogTitle(message);
+        int returnVal = chooser.showOpenDialog(null);
+        File f = null;
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            f = chooser.getSelectedFile();
+
+        }
+        //frame.dispose();
+        return f;
     }
 
     public static boolean move(File f, File dest) {
@@ -220,6 +270,16 @@ public class U {
                 fx.apply(a);
             }
         }
+
+    }
+
+
+    public static <K,V> void lput (Map<K,List<V>> map, K key, V val) {
+        List<V> l = map.get(key);
+        if (l == null) {
+            map.put(key, l= new ArrayList<V>());
+        }
+        l.add(val);
 
     }
 

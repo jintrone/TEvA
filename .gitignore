@@ -8,8 +8,14 @@
 *.iml
 .idea
 
+#Backup files#
+~*
+
 #build & deploy dir#
 build
 deploy
 out
 sample
+
+#Work dir
+DATA
