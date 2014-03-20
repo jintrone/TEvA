@@ -43,7 +43,7 @@ public class SimilarityBasedAssignment implements CommunityMembershipStrategy {
         }
         if (best == null) {
             log.info("Could not identify topic for posts");
-            return null;
+            return Collections.emptyList();
         } else {
             return Collections.singletonList(best);
 
