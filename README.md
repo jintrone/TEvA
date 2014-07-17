@@ -8,7 +8,11 @@ Algorithmically, TEvA is a mashup of a community evolution algorithm [1] and an 
 
 CODE
 ****
-This software framework is intended as a reusable, extensible library.  It currently depends upon CFinder for the underlying clique percolation algorithm, a proprietary application available for educational use at http://cfinder.org.  In the near future, I will be switching to a faster, open-source implementation of the algorithm, described in [5] and available for download at http://sourceforge.net/p/cosparallel/wiki/Home/.
+This software framework is intended as a reusable, extensible library.  It depends upon an external implementation of the underlying clique percolation algorithm, and provides adapters for two such implementations.
+
+The preferred method is a fast, open source implementation, described in [5] and available for download at http://sourceforge.net/p/cosparallel/wiki/Home/.  Note that this distribution requires that you compile two different executables, the ```maximal_cliques``` procedure which finds maximal cliques in a network, and the ```cos``` procedure which extracts k-clique communities for various sizes of k.
+
+The system can also use CFinder for the underlying clique percolation algorithm, which is a proprietary application developed by the inventors of CPM (see [1]), and is available for educational use at http://cfinder.org.  CFinder is pure java, but only available via the command line and is somewhat slower than the COS procedure.
 
 TEvA is licensed under the MIT License.  Use it however you want.  Citations are always appreciated (see [4]). :-)
 
