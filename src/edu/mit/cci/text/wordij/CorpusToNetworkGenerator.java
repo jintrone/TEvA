@@ -80,7 +80,7 @@ public class CorpusToNetworkGenerator<T extends Windowable> {
         List<Network> results = new ArrayList<Network>();
         log.info("Will process " + bmodel.getNumWindows() + " windows");
         for (int win = 0; win < bmodel.getNumWindows(); win++) {
-            log.debug("Process window " + win);
+            log.info("Process window " + win);
 
             results.add(analyzeWindow(win));
         }

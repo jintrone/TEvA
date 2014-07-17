@@ -47,7 +47,7 @@ public class LinearWeightNetworkGenerator implements TextToNetworkGenerator {
     public Network calculateWeights(List<String> preceding, List<String> sample) {
 
         if (sample == null || sample.size() == 0) return null;
-        log.info("Calculating network on sample (" + sample.size() + " tokens)");
+        log.debug("Calculating network on sample (" + sample.size() + " tokens)");
         UndirectedJungNetwork result = new UndirectedJungNetwork();
         Map<String, Node> vertices = new HashMap<String, Node>();
         List<Node> prebuffer = new ArrayList<Node>();

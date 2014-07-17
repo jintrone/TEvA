@@ -58,7 +58,7 @@ public abstract class AnalysisConsole extends ConsoleBase {
             props.load(new FileReader(pfile));
         }
 
-        start();
+
 
     }
 

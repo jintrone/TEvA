@@ -77,6 +77,7 @@ public class WindowingUtils {
         windows.add(new Date[]{posts.get(0).getTime(), null});
 
         for (int i = 0; i < posts.size(); i++) {
+            log.info("Processing post "+i);
             if (i%1000 == 0) {
                 log.info("Processing post "+i);
             }

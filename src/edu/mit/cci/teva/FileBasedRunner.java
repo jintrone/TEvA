@@ -117,7 +117,7 @@ public abstract class FileBasedRunner implements TevaRunner{
         CommunityModel model = new CommunityModel(params,factory.getTopicWindowingFactory().getStrategy().getWindowBoundaries(),conversation.getName());
         EvolutionEngine engine = new EvolutionEngine(model,params, provider, factory.getFinder(), factory.getStepper(model), factory.getMerger());
         engine.process();
-        BinningMembershipEngine membershipEngine = new BinningMembershipEngine(model,conversation,factory);
+        TopicMembershipEngine membershipEngine = factory.getMembershipEngine(model,conversation);
         membershipEngine.process();
         TevaUtils.serialize(new File(params.getWorkingDirectory() + "/CommunityOutput." + conversation.getName() + "." + params.getFilenameIdentifier() + ".xml"), model, CommunityModel.class);
 
