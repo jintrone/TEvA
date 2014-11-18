@@ -53,6 +53,11 @@ public class PrecomputedTimeWindowStrategy implements WindowStrategy<Windowable>
 
     }
 
+    @Override
+    public int[] getWindowIndices(int i) {
+        return new int[0];
+    }
+
     public Date[][] getWindowBoundaries() {
         return windows;
     }

@@ -41,6 +41,8 @@ public class Community {
     @XmlID
     public String id;
 
+    private int _id;
+
     public boolean expired = false;
 
     public boolean isExpired() {
@@ -73,9 +75,14 @@ public class Community {
     }
 
     public Community(int id) {
-        this.id = id+"";
-        ID_COUNT = Math.max(ID_COUNT, id);
+        this._id =id;
+        this.id =  "c"+_id;
+        ID_COUNT = Math.max(ID_COUNT, _id);
 
+    }
+
+    public int getNumericId() {
+        return _id;
     }
 
 

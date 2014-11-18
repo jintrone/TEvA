@@ -15,6 +15,7 @@ public interface WindowStrategy<T> {
 
     public int getNumberWindows();
     public List<T> getWindow(int i);
+    public int[] getWindowIndices(int i);
     public Date[][] getWindowBoundaries();
 
     /**

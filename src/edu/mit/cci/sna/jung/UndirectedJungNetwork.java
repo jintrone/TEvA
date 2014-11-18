@@ -75,5 +75,16 @@ public class UndirectedJungNetwork extends UndirectedSparseMultigraph<Node, Edge
         return e;
     }
 
+    public Edge addAndSum(Node node1, Node node2, float weight) {
+        Edge e = findEdge(node1, node2);
+        if (e != null) {
+            e.setWeight(e.getWeight()+weight);
+        } else {
+            e = new EdgeImpl(node1, node2, weight, false);
+            this.addEdge(e, node1, node2);
+        }
+        return e;
+    }
+
 
 }

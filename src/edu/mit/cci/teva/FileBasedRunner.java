@@ -11,6 +11,7 @@ import edu.mit.cci.text.windowing.BinningStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
+import edu.mit.cci.text.wordij.TextCorpusNetworkGenerator;
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBException;

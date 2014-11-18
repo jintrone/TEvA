@@ -10,6 +10,7 @@ import edu.mit.cci.text.windowing.BinningStrategy;
 import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
+import edu.mit.cci.text.wordij.TextCorpusNetworkGenerator;
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBException;
@@ -95,7 +96,7 @@ public class MemoryBasedRunner implements TevaRunner {
         } else {
             BinningStrategy<Windowable> binningStrategy =  factory.getTopicBinningStrategy(factory.getConversationData(), factory.getTopicWindowingFactory());
 
-            CorpusToNetworkGenerator<Windowable> networkGenerator = new CorpusToNetworkGenerator<Windowable>(binningStrategy, factory.getNetworkCalculator());
+            CorpusToNetworkGenerator<Windowable> networkGenerator = new TextCorpusNetworkGenerator<Windowable>(binningStrategy, factory.getNetworkCalculator());
             final List<Network> result = networkGenerator.analyzeToMemory();
             log.info("Done creating networks.");
             provider = new NetworkProvider() {

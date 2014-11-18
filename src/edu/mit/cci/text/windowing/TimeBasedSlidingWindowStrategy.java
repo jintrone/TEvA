@@ -56,6 +56,15 @@ public class TimeBasedSlidingWindowStrategy implements WindowStrategy<Windowable
     }
 
     public List<Windowable> getWindow(int idx) {
+
+
+        int[] indices = getWindowIndices(idx);
+        return indices==null? Collections.<Windowable>emptyList() :new ArrayList<>(current.subList(indices[0], indices[1]));
+
+    }
+
+    @Override
+    public int[] getWindowIndices(int idx) {
         Date beginning = getWindowBounds(idx)[0];
         Date end = getWindowBounds(idx)[1];
 
@@ -63,7 +72,7 @@ public class TimeBasedSlidingWindowStrategy implements WindowStrategy<Windowable
         int first = -1;
         int last = -1;
         if (current.get(0).getStart().after(end) || current.get(current.size() - 1).getStart().before(beginning))
-            return Collections.emptyList();
+            return null;
         for (int i = 0; i < current.size(); i++) {
             if (current.get(i).getStart().before(beginning)) continue;
             else if (first < 0) {
@@ -76,15 +85,11 @@ public class TimeBasedSlidingWindowStrategy implements WindowStrategy<Windowable
 
 
         }
-        if (first < 0) return Collections.emptyList();
+        if (first < 0) return null;
         if (last < 0) {
             last = current.size();
         }
-
-
-        List<Windowable> result = new ArrayList<Windowable>(current.subList(first, last));
-
-        return result;
+        return new int[]{first,last};
     }
 
     public Date[][] getWindowBoundaries() {

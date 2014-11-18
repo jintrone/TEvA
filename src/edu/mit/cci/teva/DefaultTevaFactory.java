@@ -20,6 +20,7 @@ import edu.mit.cci.text.windowing.WindowStrategy;
 import edu.mit.cci.text.windowing.Windowable;
 import edu.mit.cci.text.wordij.CorpusToNetworkGenerator;
 import edu.mit.cci.text.wordij.LinearWeightNetworkGenerator;
+import edu.mit.cci.text.wordij.TextCorpusNetworkGenerator;
 import edu.mit.cci.text.wordij.TextToNetworkGenerator;
 import org.apache.log4j.Logger;
 
@@ -40,6 +41,7 @@ public class DefaultTevaFactory implements TevaFactory {
     protected TevaParameters params;
     protected Conversation conversation;
     private static Logger log = Logger.getLogger(DefaultTevaFactory.class);
+    List<List<Windowable>> conversationData  = null;
 
     public DefaultTevaFactory(TevaParameters params, Conversation conversation) {
         this.params = params;
@@ -48,16 +50,18 @@ public class DefaultTevaFactory implements TevaFactory {
     }
 
     public List<List<Windowable>> getConversationData() throws IOException {
-        Tokenizer<String> tokenizer = getTokenizer();
-        List<List<Windowable>> data = new ArrayList<List<Windowable>>();
-        for (DiscussionThread thread : conversation.getAllThreads()) {
-            List<Windowable> threaddata = new ArrayList<Windowable>();
-            for (Post p : thread.getPosts()) {
-                threaddata.add(new WindowablePostAdapter(p, tokenizer));
+        if (conversationData==null) {
+            Tokenizer<String> tokenizer = getTokenizer();
+            conversationData = new ArrayList<List<Windowable>>();
+            for (DiscussionThread thread : conversation.getAllThreads()) {
+                List<Windowable> threaddata = new ArrayList<Windowable>();
+                for (Post p : thread.getPosts()) {
+                    threaddata.add(new WindowablePostAdapter(p, tokenizer));
+                }
+                conversationData.add(threaddata);
             }
-            data.add(threaddata);
         }
-        return data;
+        return conversationData;
     }
 
     public Munger[] getMungers() throws IOException {
@@ -120,7 +124,7 @@ public class DefaultTevaFactory implements TevaFactory {
 
 
     public CorpusToNetworkGenerator<Windowable> getNetworkGenerator(BinningStrategy<Windowable> binningStrategy) {
-        return new CorpusToNetworkGenerator<>(binningStrategy,this.getNetworkCalculator(),params.getOverwriteNetworks(), JungUtils.MergePolicy.valueOf(params.getParallelNetworkMergePolicy()));
+        return new TextCorpusNetworkGenerator<>(binningStrategy,this.getNetworkCalculator(),params.getOverwriteNetworks(), JungUtils.MergePolicy.valueOf(params.getParallelNetworkMergePolicy()));
     }
 
     @Override
