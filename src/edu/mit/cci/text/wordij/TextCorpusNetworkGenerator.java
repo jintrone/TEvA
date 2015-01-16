@@ -64,7 +64,7 @@ public class TextCorpusNetworkGenerator<T extends Windowable> implements CorpusT
                 log.info("File "+f+" exists, not generating");
                 continue;
             }
-            log.debug("Process window " + win);
+            log.debug("analyzeToFiles Process window " + win);
             try {
                 results.add(strategy.writeNetwork(analyzeWindow(win), win));
             } catch (Exception e) {
@@ -80,10 +80,18 @@ public class TextCorpusNetworkGenerator<T extends Windowable> implements CorpusT
     public List<Network> analyzeToMemory() {
         List<Network> results = new ArrayList<Network>();
         log.info("Will process " + bmodel.getNumWindows() + " windows");
-        for (int win = 0; win < bmodel.getNumWindows(); win++) {
-            log.info("Process window " + win);
 
-            results.add(analyzeWindow(win));
+        //pause for 2 seconds
+        try {
+            Thread.sleep(10000);
+        } catch ( java.lang.InterruptedException ie ) {
+            log.info(ie);
+        }
+
+        for (int win = 0; win < bmodel.getNumWindows(); win++) {
+            log.info("analyzeToMemory Process window " + win + " - information: " + analyzeWindow(win));
+
+            //results.add(analyzeWindow(win));
         }
         log.info("Done processing windows");
         return results;
