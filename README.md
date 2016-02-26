@@ -1,5 +1,3 @@
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/5bef61b67c3996417b51f2a055b9cdad "githalytics.com")](http://githalytics.com/jintrone/TEvA)
-
 BACKGROUND
 **********
 TEvA is an approach to tracing the evolution of topics (where topics are defined as something like a cluster of frequently co-occurring words) across an online conversation.  It produces a temporal trace of topics as they evolve, merge, and split.  
