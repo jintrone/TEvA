@@ -2,6 +2,7 @@ package edu.mit.cci.teva;
 
 import edu.mit.cci.sna.jung.JungUtils;
 import edu.mit.cci.teva.cpm.cfinder.CFinderCommunityFinder;
+import edu.mit.cci.teva.cpm.cos.CosCommunityFinder;
 import edu.mit.cci.teva.engine.*;
 import edu.mit.cci.teva.model.Conversation;
 import edu.mit.cci.teva.model.DiscussionThread;
@@ -133,7 +134,7 @@ public class DefaultTevaFactory implements TevaFactory {
     }
 
     public CommunityFinder getFinder() {
-        return new CFinderCommunityFinder(params.getOverwriteNetworks(), params.getOverwriteAnalyses(), params);
+        return new CosCommunityFinder(params);
     }
 
     public BinningStrategy<Windowable> getTopicBinningStrategy(List<List<Windowable>> data, WindowStrategy.Factory<Windowable> windows) {

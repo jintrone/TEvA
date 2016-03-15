@@ -9,19 +9,19 @@ import edu.mit.cci.sna.impl.NodeImpl;
 import edu.uci.ics.jung.graph.AbstractGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
-import it.uniroma1.dis.wsngroup.gexf4j.core.EdgeType;
-import it.uniroma1.dis.wsngroup.gexf4j.core.Gexf;
-import it.uniroma1.dis.wsngroup.gexf4j.core.Mode;
-import it.uniroma1.dis.wsngroup.gexf4j.core.data.Attribute;
-import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeClass;
-import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeList;
-import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeType;
-import it.uniroma1.dis.wsngroup.gexf4j.core.dynamic.Spell;
-import it.uniroma1.dis.wsngroup.gexf4j.core.dynamic.TimeFormat;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.GexfImpl;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.SpellImpl;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.StaxGraphWriter;
-import it.uniroma1.dis.wsngroup.gexf4j.core.impl.data.AttributeListImpl;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.EdgeType;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.Gexf;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.Mode;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.data.Attribute;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeClass;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeList;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.data.AttributeType;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.dynamic.Spell;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.dynamic.TimeFormat;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.impl.GexfImpl;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.impl.SpellImpl;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.impl.StaxGraphWriter;
+//import it.uniroma1.dis.wsngroup.gexf4j.core.impl.data.AttributeListImpl;
 import org.apache.commons.collections15.Transformer;
 import org.apache.log4j.Logger;
 
@@ -201,7 +201,7 @@ public class JungUtils {
 
         }
         result.put(new Date(start + (1000l * 60l * 60l * 24l * i)), null);
-        createDynamicGraph(out, description, result, directed, atts);
+   //     createDynamicGraph(out, description, result, directed, atts);
     }
 
     public static void createDynamicGraph(File out, String description, List<Network> data, boolean directed) throws IOException {
@@ -223,137 +223,137 @@ public class JungUtils {
     }
 
 
-    public static void createDynamicGraph(File out, String description, LinkedHashMap<Date, Network> data, boolean directed, List<AttributeHolder> atts) throws IOException {
-        Gexf gexf = new GexfImpl();
-        gexf.getMetadata().setLastModified(new Date()).setCreator("Josh Introne").setDescription(description);
-        gexf.getGraph().setMode(Mode.DYNAMIC).setTimeType(TimeFormat.XSDDATETIME);
-        gexf.getGraph().setDefaultEdgeType(directed ? EdgeType.DIRECTED : EdgeType.UNDIRECTED);
-        AttributeList aList = new AttributeListImpl(AttributeClass.EDGE);
-        aList.setMode(Mode.DYNAMIC);
-        Attribute weight = aList.createAttribute("weight", AttributeType.FLOAT, "Weight");
-
-        AttributeList nList = new AttributeListImpl(AttributeClass.NODE);
-        nList.setMode(Mode.DYNAMIC);
-
-        gexf.getGraph().getAttributeLists().add(aList);
-        gexf.getGraph().getAttributeLists().add(nList);
-        List<Attribute> nAtts = new ArrayList<Attribute>();
-        if (atts != null) {
-            AttributeHolder h = atts.get(0);
-            for (String s : h.attnames) {
-                nAtts.add(nList.createAttribute(AttributeType.STRING, s));
-            }
-        }
-
-        Map<Collection<String>, it.uniroma1.dis.wsngroup.gexf4j.core.Edge> edges = new HashMap<>();
-        Map<String, it.uniroma1.dis.wsngroup.gexf4j.core.Node> nodes = new HashMap<>();
-        Map<String, List<Integer>> lifetime = new HashMap<String, List<Integer>>();
-        List<Network> networks = new ArrayList<>(data.values());
-        List<Date> dates = new ArrayList<>(data.keySet());
-        for (int i = 0; i < networks.size() - 1; i++) {
-            AttributeHolder a = atts != null ? atts.get(i) : null;
-            Set<String> processed = new HashSet<>();
-            for (edu.mit.cci.sna.Edge e : networks.get(i).getEdges()) {
-                Node[] ends = e.getEndpoints();
-
-
-                it.uniroma1.dis.wsngroup.gexf4j.core.Node gfrom = nodes.get(ends[0].getId());
-                List<Integer> active = lifetime.get(ends[0].getId());
-                if (active == null) {
-                    lifetime.put(ends[0].getId(), active = new ArrayList<>());
-                }
-                if (!active.contains(i)) active.add(i);
-
-                if (gfrom == null) {
-                    if (ends[0].getId().trim().isEmpty()) {
-                        System.err.println("What is up?");
-                    }
-                    gfrom = gexf.getGraph().createNode(ends[0].getId());
-                    gfrom.setLabel(gfrom.getId());
-                    nodes.put(ends[0].getId(), gfrom);
-                }
-                if (a != null && !processed.contains(gfrom.getLabel()) && a.values.containsKey(gfrom.getLabel())) {
-                    processed.add(gfrom.getLabel());
-                    for (int ai = 0; ai < nAtts.size(); ai++) {
-                        gfrom.getAttributeValues().createValue(nAtts.get(ai), a.values.get(gfrom.getLabel())[ai]).setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
-                    }
-                }
-
-
-                it.uniroma1.dis.wsngroup.gexf4j.core.Node gto = nodes.get(ends[1].getId());
-                active = lifetime.get(ends[1]);
-                if (active == null) {
-                    lifetime.put(ends[1].getId(), active = new ArrayList<Integer>());
-                }
-                if (!active.contains(i)) active.add(i);
-
-                if (gto == null) {
-                    gto = gexf.getGraph().createNode(ends[1].getId());
-                    gto.setLabel(gto.getId());
-                    nodes.put(ends[1].getId(), gto);
-                }
-
-                if (a != null && !processed.contains(gto.getLabel()) && a.values.containsKey(gto.getLabel())) {
-                    processed.add(gto.getLabel());
-                    for (int ai = 0; ai < nAtts.size(); ai++) {
-                        gto.getAttributeValues().createValue(nAtts.get(ai), a.values.get(gto.getLabel())[ai]).setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
-                    }
-                }
-                Collection cE = Arrays.asList(ends[0].getId(),ends[1].getId());
-                if (!directed) {
-                   cE = new HashSet(cE);
-                }
-
-                it.uniroma1.dis.wsngroup.gexf4j.core.Edge ge = edges.get(cE);
-                if (ge == null) {
-                    ge = gfrom.connectTo(gto);
-                    ge.setEdgeType(directed ? EdgeType.DIRECTED : EdgeType.UNDIRECTED);
-                    edges.put(cE, ge);
-
-                }
-
-                ge.getAttributeValues().createValue(weight, e.getWeight() + "").setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
-
-
-            }
-
-        }
-
-
-        for (String s : nodes.keySet()) {
-            it.uniroma1.dis.wsngroup.gexf4j.core.Node gnode = nodes.get(s);
-
-            Spell current = null;
-            int last = -1;
-            if (lifetime.get(s) == null) continue;
-
-            Collections.sort(lifetime.get(s));
-            for (Integer i : lifetime.get(s)) {
-                if (current == null) {
-                    gnode.getSpells().add(current = new SpellImpl());
-                    current.setStartValue(dates.get(i));
-                    last = i;
-                } else if (i - last > 1) {
-                    current.setEndValue(dates.get(last + 1));
-                    gnode.getSpells().add(current = new SpellImpl());
-                    current.setStartValue(dates.get(i));
-                    last = i;
-                } else {
-                    last = i;
-                }
-
-            }
-            if (current != null && !current.hasEndDate()) {
-                current.setEndValue(dates.get(last + 1));
-            }
-
-
-        }
-
-        new StaxGraphWriter().writeToStream(gexf, new FileOutputStream(out),"UTF8");
-
-
-    }
+//    public static void createDynamicGraph(File out, String description, LinkedHashMap<Date, Network> data, boolean directed, List<AttributeHolder> atts) throws IOException {
+//        Gexf gexf = new GexfImpl();
+//        gexf.getMetadata().setLastModified(new Date()).setCreator("Josh Introne").setDescription(description);
+//        gexf.getGraph().setMode(Mode.DYNAMIC).setTimeType(TimeFormat.XSDDATETIME);
+//        gexf.getGraph().setDefaultEdgeType(directed ? EdgeType.DIRECTED : EdgeType.UNDIRECTED);
+//        AttributeList aList = new AttributeListImpl(AttributeClass.EDGE);
+//        aList.setMode(Mode.DYNAMIC);
+//        Attribute weight = aList.createAttribute("weight", AttributeType.FLOAT, "Weight");
+//
+//        AttributeList nList = new AttributeListImpl(AttributeClass.NODE);
+//        nList.setMode(Mode.DYNAMIC);
+//
+//        gexf.getGraph().getAttributeLists().add(aList);
+//        gexf.getGraph().getAttributeLists().add(nList);
+//        List<Attribute> nAtts = new ArrayList<Attribute>();
+//        if (atts != null) {
+//            AttributeHolder h = atts.get(0);
+//            for (String s : h.attnames) {
+//                nAtts.add(nList.createAttribute(AttributeType.STRING, s));
+//            }
+//        }
+//
+//        Map<Collection<String>, it.uniroma1.dis.wsngroup.gexf4j.core.Edge> edges = new HashMap<>();
+//        Map<String, it.uniroma1.dis.wsngroup.gexf4j.core.Node> nodes = new HashMap<>();
+//        Map<String, List<Integer>> lifetime = new HashMap<String, List<Integer>>();
+//        List<Network> networks = new ArrayList<>(data.values());
+//        List<Date> dates = new ArrayList<>(data.keySet());
+//        for (int i = 0; i < networks.size() - 1; i++) {
+//            AttributeHolder a = atts != null ? atts.get(i) : null;
+//            Set<String> processed = new HashSet<>();
+//            for (edu.mit.cci.sna.Edge e : networks.get(i).getEdges()) {
+//                Node[] ends = e.getEndpoints();
+//
+//
+//                it.uniroma1.dis.wsngroup.gexf4j.core.Node gfrom = nodes.get(ends[0].getId());
+//                List<Integer> active = lifetime.get(ends[0].getId());
+//                if (active == null) {
+//                    lifetime.put(ends[0].getId(), active = new ArrayList<>());
+//                }
+//                if (!active.contains(i)) active.add(i);
+//
+//                if (gfrom == null) {
+//                    if (ends[0].getId().trim().isEmpty()) {
+//                        System.err.println("What is up?");
+//                    }
+//                    gfrom = gexf.getGraph().createNode(ends[0].getId());
+//                    gfrom.setLabel(gfrom.getId());
+//                    nodes.put(ends[0].getId(), gfrom);
+//                }
+//                if (a != null && !processed.contains(gfrom.getLabel()) && a.values.containsKey(gfrom.getLabel())) {
+//                    processed.add(gfrom.getLabel());
+//                    for (int ai = 0; ai < nAtts.size(); ai++) {
+//                        gfrom.getAttributeValues().createValue(nAtts.get(ai), a.values.get(gfrom.getLabel())[ai]).setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
+//                    }
+//                }
+//
+//
+//                it.uniroma1.dis.wsngroup.gexf4j.core.Node gto = nodes.get(ends[1].getId());
+//                active = lifetime.get(ends[1]);
+//                if (active == null) {
+//                    lifetime.put(ends[1].getId(), active = new ArrayList<Integer>());
+//                }
+//                if (!active.contains(i)) active.add(i);
+//
+//                if (gto == null) {
+//                    gto = gexf.getGraph().createNode(ends[1].getId());
+//                    gto.setLabel(gto.getId());
+//                    nodes.put(ends[1].getId(), gto);
+//                }
+//
+//                if (a != null && !processed.contains(gto.getLabel()) && a.values.containsKey(gto.getLabel())) {
+//                    processed.add(gto.getLabel());
+//                    for (int ai = 0; ai < nAtts.size(); ai++) {
+//                        gto.getAttributeValues().createValue(nAtts.get(ai), a.values.get(gto.getLabel())[ai]).setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
+//                    }
+//                }
+//                Collection cE = Arrays.asList(ends[0].getId(),ends[1].getId());
+//                if (!directed) {
+//                   cE = new HashSet(cE);
+//                }
+//
+//                it.uniroma1.dis.wsngroup.gexf4j.core.Edge ge = edges.get(cE);
+//                if (ge == null) {
+//                    ge = gfrom.connectTo(gto);
+//                    ge.setEdgeType(directed ? EdgeType.DIRECTED : EdgeType.UNDIRECTED);
+//                    edges.put(cE, ge);
+//
+//                }
+//
+//                ge.getAttributeValues().createValue(weight, e.getWeight() + "").setStartValue(dates.get(i)).setEndValue(dates.get(i + 1));
+//
+//
+//            }
+//
+//        }
+//
+//
+//        for (String s : nodes.keySet()) {
+//            it.uniroma1.dis.wsngroup.gexf4j.core.Node gnode = nodes.get(s);
+//
+//            Spell current = null;
+//            int last = -1;
+//            if (lifetime.get(s) == null) continue;
+//
+//            Collections.sort(lifetime.get(s));
+//            for (Integer i : lifetime.get(s)) {
+//                if (current == null) {
+//                    gnode.getSpells().add(current = new SpellImpl());
+//                    current.setStartValue(dates.get(i));
+//                    last = i;
+//                } else if (i - last > 1) {
+//                    current.setEndValue(dates.get(last + 1));
+//                    gnode.getSpells().add(current = new SpellImpl());
+//                    current.setStartValue(dates.get(i));
+//                    last = i;
+//                } else {
+//                    last = i;
+//                }
+//
+//            }
+//            if (current != null && !current.hasEndDate()) {
+//                current.setEndValue(dates.get(last + 1));
+//            }
+//
+//
+//        }
+//
+//        new StaxGraphWriter().writeToStream(gexf, new FileOutputStream(out),"UTF8");
+//
+//
+//    }
 
 
 }

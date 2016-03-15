@@ -28,6 +28,8 @@ Without parameters, the application will run using the sample corpus included wi
 
        RunSampleCsv [-p<properties_file>] [-f<input_csv>]
 
+The default application uses ```cos``` algorithm; please see above regarding installation.
+
 The sample application is provided as an example only, and I recommend using a database for persistence rather than a CSV.
 
 
